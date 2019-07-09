@@ -122,7 +122,7 @@ export default {
   data() {
     return {
       loading: true,
-      tab: '',
+      tab: 1,
       videoClass: [],
       left: this.$q.platform.is.desktop,
       right: false,
@@ -130,11 +130,14 @@ export default {
     };
   },
   watch: {
-    tab(current) {
-      this.setCurrentClass('all');
-      this.setCurrentSiteId(current);
-      this.getClass();
-      this.$router.push('/');
+    tab: {
+      handler() {
+        this.setCurrentClass('all');
+        this.setCurrentSiteId(this.tab);
+        this.getClass();
+        this.$router.push('/');
+      },
+      immediate: true,
     },
     CurrentSite(val) {
       console.log(val);
