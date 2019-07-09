@@ -33,6 +33,10 @@ module.exports = function (ctx) {
       // all: true, // --- includes everything; for dev only!
 
       components: [
+        'QAvatar',
+        'QTabs',
+        'QTab',
+        'QFooter',
         'QLayout',
         'QHeader',
         'QDrawer',
@@ -46,12 +50,21 @@ module.exports = function (ctx) {
         'QItem',
         'QItemSection',
         'QItemLabel',
+        'QImg',
+        'QCard',
+        'QCardSection',
+        'QPagination',
+        'QInnerLoading',
+        'QSpinnerGears',
+        'QScrollArea',
+        'QForm',
+        'QToggle',
       ],
 
       directives: ['Ripple'],
 
       // Quasar plugins
-      plugins: ['Notify'],
+      plugins: ['Notify', 'Loading'],
     },
 
     supportIE: false,

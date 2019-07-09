@@ -22,10 +22,13 @@ function createWindow() {
     useContentSize: true,
     webPreferences: {
       nodeIntegration: true,
+      webSecurity: false,
     },
   });
 
   mainWindow.loadURL(process.env.APP_URL);
+
+  mainWindow.removeMenu();
 
   mainWindow.on('closed', () => {
     mainWindow = null;
