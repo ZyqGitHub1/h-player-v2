@@ -20,7 +20,6 @@ export default {
   methods: {
     normalizeUrl(url) {
       const pureUrl = url.replace(/(.*?)\$/, '').replace(/\$(.*)/, '');
-      console.log(pureUrl);
       return normalizeUrl(pureUrl);
     },
   },
