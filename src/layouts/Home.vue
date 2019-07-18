@@ -91,7 +91,9 @@
     </q-drawer>
 
     <q-page-container>
-      <router-view />
+      <navigation>
+        <router-view />
+      </navigation>
     </q-page-container>
 
     <q-footer
