@@ -76,6 +76,11 @@ export default {
     currentClass() {
       this.getVideoList(1);
     },
+    keyWord(newKeyWord, oldKeyWord) {
+      if (newKeyWord !== oldKeyWord) {
+        this.getVideoList(1);
+      }
+    },
   },
   methods: {
     ...mapMutations(['setCurrentVideo']),
@@ -87,6 +92,9 @@ export default {
       };
       if (this.currentClass !== 'all') {
         params.t = this.currentClass;
+      }
+      if (this.keyWord) {
+        params.wd = this.keyWord;
       }
       const uri = this.https
         ? this.currentSite.httpsApi
@@ -114,6 +122,7 @@ export default {
     ...mapState({
       currentClass: state => state.site.currentClass,
       https: state => state.app.https,
+      keyWord: state => state.site.keyWord,
     }),
   },
 };

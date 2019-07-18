@@ -61,6 +61,7 @@ module.exports = function (ctx) {
         'QToggle',
         'QPageSticky',
         'QInput',
+        'QSeparator',
       ],
 
       directives: ['Ripple'],
