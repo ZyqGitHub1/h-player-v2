@@ -1,4 +1,4 @@
-# Quasar App
+# h-player
 
 ## Project setup
 ```
