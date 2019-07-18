@@ -1,6 +1,6 @@
 <template>
   <q-page padding>
-    <q-scroll-area style="height: calc(100vh - 257px);">
+    <q-scroll-area style="height: calc(100vh - 198px);">
       <div class="q-pa-md row items-start justify-center q-gutter-md">
         <q-card
           class="my-card"

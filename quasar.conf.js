@@ -59,6 +59,8 @@ module.exports = function (ctx) {
         'QScrollArea',
         'QForm',
         'QToggle',
+        'QPageSticky',
+        'QInput',
       ],
 
       directives: ['Ripple'],

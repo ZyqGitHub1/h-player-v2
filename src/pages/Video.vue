@@ -7,6 +7,17 @@
       :source="normalizeUrl(currentVideo.dl.dd._)"
       :options="options"
     ></hls-player>
+    <q-page-sticky
+      position="top-right"
+      :offset="[5, 5]"
+    >
+      <q-btn
+        round
+        color="accent"
+        icon="arrow_back"
+        @click="goback"
+      />
+    </q-page-sticky>
   </q-page>
 </template>
 
@@ -42,6 +53,9 @@ export default {
     normalizeUrl(url) {
       const pureUrl = url.replace(/(.*?)\$/, '').replace(/\$(.*)/, '');
       return normalizeUrl(pureUrl);
+    },
+    goback() {
+      this.$router.go(-1);
     },
   },
   computed: {
