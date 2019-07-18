@@ -3,7 +3,10 @@
     class="video-warp"
     padding
   >
-    <hls-player :source="normalizeUrl(currentVideo.dl.dd._)"></hls-player>
+    <hls-player
+      :source="normalizeUrl(currentVideo.dl.dd._)"
+      :options="options"
+    ></hls-player>
   </q-page>
 </template>
 
@@ -14,6 +17,24 @@ import { mapState } from 'vuex';
 
 export default {
   name: 'Videop',
+  data() {
+    return {
+      options: {
+        controls: [
+          'play-large',
+          'play',
+          'progress',
+          'current-time',
+          'mute',
+          'volume',
+          'captions',
+          'settings',
+          'airplay',
+          'fullscreen',
+        ],
+      },
+    };
+  },
   components: {
     HlsPlayer,
   },
