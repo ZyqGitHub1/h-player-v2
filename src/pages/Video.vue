@@ -34,6 +34,6 @@ export default {
 
 <style>
 .video-warp {
-  height: calc(100vh - 257px);
+  height: calc(100vh - 148px);
 }
 </style>
