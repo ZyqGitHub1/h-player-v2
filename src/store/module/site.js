@@ -68,6 +68,7 @@ export default {
     ],
     currentSiteId: 1,
     currentClass: '',
+    keyWord: '',
   },
   mutations: {
     setCurrentSiteId(state, currentSiteId) {
@@ -75,6 +76,9 @@ export default {
     },
     setCurrentClass(state, currentClass) {
       state.currentClass = currentClass;
+    },
+    setKeyWord(state, keyWord) {
+      state.keyWord = keyWord;
     },
   },
   getters: {

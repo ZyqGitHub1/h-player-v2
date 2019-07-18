@@ -54,18 +54,7 @@ export default {
       hls.loadSource(this.source);
       hls.attachMedia(this.video);
       this.$once('hook:beforeDestroy', () => {
-        try {
-          this.player.destroy();
-        } catch (e) {
-          if (
-            !(
-              this.opts.hideYouTubeDOMError
-              && e.message === 'The YouTube player is not attached to the DOM.'
-            )
-          ) {
-            console.error(e);
-          }
-        }
+        this.player.destroy();
         hls.stopLoad();
         hls.destroy();
       });

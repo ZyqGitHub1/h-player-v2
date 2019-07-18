@@ -51,6 +51,22 @@
       side="left"
       bordered
     >
+      <div class="row serch">
+        <div class="col">
+          <q-input
+            clearable
+            borderless
+            v-model="keyWord"
+            label="请输入关键字"
+            @keyup.enter="search"
+          >
+            <template v-slot:prepend>
+              <q-icon name="search" />
+            </template>
+          </q-input>
+        </div>
+      </div>
+      <q-separator />
       <q-list separator>
         <q-item
           clickable
@@ -91,7 +107,9 @@
     </q-drawer>
 
     <q-page-container>
-      <router-view />
+      <navigation>
+        <router-view />
+      </navigation>
     </q-page-container>
 
     <q-footer
@@ -122,6 +140,7 @@ export default {
   data() {
     return {
       loading: true,
+      keyWord: '',
       tab: 1,
       videoClass: [],
       left: this.$q.platform.is.desktop,
@@ -139,8 +158,10 @@ export default {
       },
       immediate: true,
     },
-    CurrentSite(val) {
-      console.log(val);
+    keyWord() {
+      if (this.keyWord === null) {
+        this.$store.commit('setKeyWord', this.keyWord);
+      }
     },
   },
   methods: {
@@ -165,6 +186,9 @@ export default {
       this.setCurrentClass(currentClass);
       this.$router.push('/');
     },
+    search() {
+      this.$store.commit('setKeyWord', this.keyWord);
+    },
   },
   computed: {
     ...mapGetters(['currentSite']),
@@ -186,5 +210,9 @@ export default {
 <style lang="stylus">
 .q-layout, .q-page {
   min-height: inherit !important;
+}
+
+.serch {
+  margin-top: 24px;
 }
 </style>
