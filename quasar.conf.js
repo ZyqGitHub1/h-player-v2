@@ -67,7 +67,15 @@ module.exports = function (ctx) {
       directives: ['Ripple'],
 
       // Quasar plugins
-      plugins: ['Notify', 'Loading'],
+      plugins: ['Notify', 'Loading', 'LoadingBar'],
+      config: {
+        loadingBar: {
+          color: 'purple',
+          size: '10px',
+          position: 'top',
+          skipHijack: true,
+        },
+      },
     },
 
     supportIE: false,

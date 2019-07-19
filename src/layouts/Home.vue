@@ -69,18 +69,12 @@
       <q-separator />
       <q-list separator>
         <q-item
-          clickable
-          v-ripple
-          @click="changeClass('all')"
-        >
-          <q-item-section>全部</q-item-section>
-        </q-item>
-        <q-item
           v-for="classInfo in videoClass"
           :key="classInfo.$.id"
           clickable
           v-ripple
           @click="changeClass(classInfo.$.id)"
+          :active="currentClass === classInfo.$.id"
         >
           <q-item-section>{{ classInfo._ }}</q-item-section>
         </q-item>
@@ -176,6 +170,12 @@ export default {
         .then(res => parseStringSync(res.data, { explicitArray: false }))
         .then((data) => {
           this.videoClass = data.rss.class.ty;
+          this.videoClass.unshift({
+            _: '全部',
+            $: {
+              id: 'all',
+            },
+          });
         })
         .catch(console.error)
         .finally(() => {
@@ -194,6 +194,7 @@ export default {
     ...mapGetters(['currentSite']),
     ...mapState({
       siteList: state => state.site.siteList,
+      currentClass: state => state.site.currentClass,
     }),
     https: {
       get() {
