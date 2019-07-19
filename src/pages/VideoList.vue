@@ -86,6 +86,7 @@ export default {
     ...mapMutations(['setCurrentVideo']),
     getVideoList(page) {
       this.loading = true;
+      this.$q.loadingBar.start();
       const params = {
         ac: 'videolist',
         pg: page,
@@ -110,6 +111,7 @@ export default {
         .catch(console.error)
         .finally(() => {
           this.loading = false;
+          this.$q.loadingBar.stop();
         });
     },
     gotoPlayer(video) {
