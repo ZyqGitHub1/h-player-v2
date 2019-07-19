@@ -128,6 +128,8 @@ import { mapState, mapMutations, mapGetters } from 'vuex';
 import util from 'util';
 import { parseString } from 'xml2js';
 
+const ipc = require('electron').ipcRenderer;
+
 const parseStringSync = util.promisify(parseString);
 
 export default {
@@ -141,6 +143,11 @@ export default {
       right: false,
       httoOrHttps: false,
     };
+  },
+  created() {
+    ipc.on('from-mini', (event, message) => {
+      this.gotoPlayer(message);
+    });
   },
   watch: {
     tab: {
@@ -159,7 +166,7 @@ export default {
     },
   },
   methods: {
-    ...mapMutations(['setCurrentSiteId', 'setCurrentClass']),
+    ...mapMutations(['setCurrentSiteId', 'setCurrentClass', 'setCurrentVideo']),
     getClass() {
       this.loading = true;
       this.$axios(this.currentSite.httpsApi, {
@@ -188,6 +195,10 @@ export default {
     },
     search() {
       this.$store.commit('setKeyWord', this.keyWord);
+    },
+    gotoPlayer(video) {
+      this.setCurrentVideo(video);
+      this.$router.push('/video');
     },
   },
   computed: {

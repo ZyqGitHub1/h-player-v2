@@ -1,11 +1,16 @@
 const routes = [
   {
     path: '/',
-    component: () => import('layouts/Home.vue'),
+    component: () => import('layouts/Home'),
     children: [
       { path: '', component: () => import('pages/VideoList') },
       { path: 'video', component: () => import('pages/Video') },
     ],
+  },
+  {
+    path: '/mini-video',
+    component: () => import('layouts/Mini'),
+    children: [{ path: '', component: () => import('pages/MiniVideo') }],
   },
 ];
 

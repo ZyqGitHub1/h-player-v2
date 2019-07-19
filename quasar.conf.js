@@ -67,7 +67,7 @@ module.exports = function (ctx) {
       directives: ['Ripple'],
 
       // Quasar plugins
-      plugins: ['Notify', 'Loading', 'LoadingBar'],
+      plugins: ['Notify', 'Loading', 'LoadingBar', 'Dialog'],
       config: {
         loadingBar: {
           color: 'purple',

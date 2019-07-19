@@ -19,11 +19,13 @@
   "dependencies": {
     "@quasar/extras": "^1.0.0",
     "axios": "^0.18.1",
+    "electron-positioner": "^4.1.0",
     "hls.js": "^0.12.4",
     "lodash": "^4.17.11",
     "normalize-url": "^4.3.0",
     "plyr": "^3.5.6",
     "quasar": "^1.0.0",
+    "query-string": "^6.8.1",
     "vue-i18n": "^8.0.0",
     "vue-navigation": "^1.1.4",
     "vue-plyr": "^5.1.3",
