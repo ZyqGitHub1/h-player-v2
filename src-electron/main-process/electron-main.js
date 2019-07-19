@@ -2,6 +2,8 @@
 /* eslint-disable no-underscore-dangle */
 import { app, BrowserWindow } from 'electron';
 
+const { ipcMain } = require('electron');
+
 /**
  * Set `__statics` path to static files in production;
  * The reason we are setting it here is that the path needs to be evaluated at runtime
@@ -32,6 +34,10 @@ function createWindow() {
 
   mainWindow.on('closed', () => {
     mainWindow = null;
+  });
+
+  ipcMain.on('from-mini', (event, arg) => {
+    mainWindow.webContents.send('from-mini', arg);
   });
 }
 
