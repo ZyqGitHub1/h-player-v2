@@ -15,9 +15,9 @@ h-player-v2 是基于 Quasar Framework 开发应用程序，通过 electron 包�
 
 <a  target="_blank" href ="https://raw.githubusercontent.com/ZyqGitHub1/h-player-v2/master/screenshot/screenshot-list.png">🔞 首页截图</a>
 
-<a  target="_blank" href ="https://raw.githubusercontent.com/ZyqGitHub1/h-player-v2/master/screenshot/screenshot-mini.png">🔞 播放页截图</a>
+<a  target="_blank" href ="https://raw.githubusercontent.com/ZyqGitHub1/h-player-v2/master/screenshot/screenshot-video.png">🔞 播放页截图</a>
 
-<a  target="_blank" href ="https://raw.githubusercontent.com/ZyqGitHub1/h-player-v2/master/screenshot/screenshot-video.png">🔞 多窗口播放截图</a>
+<a  target="_blank" href ="https://raw.githubusercontent.com/ZyqGitHub1/h-player-v2/master/screenshot/screenshot-mini.png">🔞 多窗口播放截图</a>
 
 ## Get Started
 
