@@ -90,13 +90,16 @@ export default {
       this.getVideoList(value);
     },
     currentSite() {
+      this.pagination.page = 1;
       this.getVideoList(1);
     },
     currentClass() {
+      this.pagination.page = 1;
       this.getVideoList(1);
     },
     keyWord(newKeyWord, oldKeyWord) {
       if (newKeyWord !== oldKeyWord) {
+        this.pagination.page = 1;
         this.getVideoList(1);
       }
     },
@@ -125,7 +128,7 @@ export default {
         .then(res => parseStringSync(res.data, { explicitArray: false }))
         .then((data) => {
           this.videoList = data.rss.list.video;
-          this.pagination.total = _toInteger(data.rss.list.$.recordcount);
+          this.pagination.total = _toInteger(data.rss.list.$.pagecount);
         })
         .catch(console.error)
         .finally(() => {
