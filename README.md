@@ -40,7 +40,7 @@ See [Configuration Reference](https://quasar.dev/quasar-cli/quasar-conf-js).
 
 ## Windows Release
 
-对于 windows 用户提供了编译完成的应用，请到 release 页面下载最新版本
+对于 windows 用户提供了编译完成的应用，请到 [release](https://github.com/ZyqGitHub1/h-player-v2/releases) 页面下载最新版本
 
 ## 使用方法:
 
