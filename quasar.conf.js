@@ -62,6 +62,8 @@ module.exports = function (ctx) {
         'QPageSticky',
         'QInput',
         'QSeparator',
+        'QChip',
+        'QTooltip',
       ],
 
       directives: ['Ripple'],

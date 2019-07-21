@@ -3,7 +3,7 @@
     <q-scroll-area style="height: calc(100vh - 198px);">
       <div class="q-pa-md row items-start justify-center q-gutter-md">
         <q-card
-          class="my-card"
+          class="my-card cursor-pointer"
           v-for="video in videoList"
           :key="video.id"
           @click="gotoPlayer(video)"
@@ -13,16 +13,35 @@
             spinner-color="red"
             style="height: 200px;width: 290px"
           >
-            <div class="absolute-bottom text-subtitle1 text-center q-pa-xs">{{video.name}}</div>
+            <div
+              class="absolute-bottom ellipsis text-subtitle1 text-center q-pa-xs"
+            >{{video.name}}</div>
             <template v-slot:error>
               <div class="absolute-full flex flex-center bg-negative text-white">
                 <span>Cannot load image</span>
+                <div
+                  class="absolute-bottom ellipsis text-subtitle1 text-center q-pa-xs"
+                >{{video.name}}</div>
               </div>
             </template>
           </q-img>
           <q-card-section>
-            <div class="text-h6">{{video.type}}</div>
-            <div class="text-subtitle2">{{ video.last }}</div>
+            <div class="text-h6 ellipsis title">
+              {{video.name}}
+              <q-tooltip>{{video.name}}</q-tooltip>
+            </div>
+            <q-chip
+              square
+              color="teal"
+              text-color="white"
+              icon="bookmark"
+            >{{video.type}}</q-chip>
+            <q-chip
+              square
+              color="teal"
+              text-color="white"
+              icon="event"
+            >{{video.last}}</q-chip>
           </q-card-section>
         </q-card>
       </div>
@@ -130,9 +149,13 @@ export default {
 };
 </script>
 
-<style>
+<style lang="stylus">
 .my-card {
   width: 100%;
   max-width: 290px;
+
+  .title {
+    margin: 4px;
+  }
 }
 </style>
