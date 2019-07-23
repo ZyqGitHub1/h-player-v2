@@ -179,6 +179,10 @@ import { mapState, mapMutations, mapGetters } from 'vuex';
 import util from 'util';
 import { parseString } from 'xml2js';
 
+const Store = require('electron-store');
+
+const store = new Store();
+
 const ipc = require('electron').ipcRenderer;
 
 const parseStringSync = util.promisify(parseString);
@@ -195,25 +199,31 @@ export default {
       httoOrHttps: false,
     };
   },
+  beforeRouteEnter(from, to, next) {
+    const storeSiteList = store.get('siteList');
+    if (!storeSiteList || storeSiteList.length === 0) {
+      next('/import');
+    }
+
+    next();
+  },
   created() {
     const storeSiteList = this.$electronStore.get('siteList');
     this.setSiteList(storeSiteList);
-    if (!this.siteList || this.siteList.length === 0) {
-      this.$router.replace('/import');
-    }
     ipc.on('from-mini', (event, message) => {
       this.gotoPlayer(message);
     });
+    this.setCurrentClass('all');
+    this.setCurrentSiteId(this.tab);
+    this.getClass();
+    this.$router.push('/');
   },
   watch: {
-    tab: {
-      handler() {
-        this.setCurrentClass('all');
-        this.setCurrentSiteId(this.tab);
-        this.getClass();
-        this.$router.push('/');
-      },
-      immediate: true,
+    tab() {
+      this.setCurrentClass('all');
+      this.setCurrentSiteId(this.tab);
+      this.getClass();
+      this.$router.push('/');
     },
     keyWord() {
       if (this.keyWord === null) {
