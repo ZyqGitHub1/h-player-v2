@@ -46,12 +46,20 @@ See [Configuration Reference](https://quasar.dev/quasar-cli/quasar-conf-js).
 1. 到release下载最新版本的压缩包
 2. 解压文件到任意目录
 3. 运行解压目录下的h-player.exe文件
+4. 未导入视频源时会显示导入视频源界面
+5. 点击`暂无视频源，点击选择文件导入`按钮
+6. 选择视频源文件导入。***示例文件位于[gist](https://gist.github.com/ZyqGitHub1/104becf19ebb84f601e3d32b59418944)***
+7. have fun
+
+> ### Note
+>
+> 1. 视频源只需导入一次，可以在设置界面重新导入或清空视频源
 
 ## TODO
 
 - [x] 高亮当前分类
 - [x] 页面缓存
 - [x] 独立窗口播放
-- [ ] 持久化配置文件
-- [ ] 支持导入视频源
+- [x] 持久化配置文件
+- [x] 支持导入视频源
 - [ ] http/https 功能优化
