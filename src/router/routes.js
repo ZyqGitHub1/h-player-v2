@@ -1,5 +1,9 @@
 const routes = [
   {
+    path: '/import',
+    component: () => import('layouts/Import'),
+  },
+  {
     path: '/',
     component: () => import('layouts/Home'),
     children: [
