@@ -92,12 +92,63 @@
       side="right"
       bordered
     >
-      <q-form class="q-gutter-md">
-        <q-toggle
-          v-model="https"
-          label="是否使用https"
-        />
-      </q-form>
+      <q-scroll-area class="fit">
+        <q-list>
+          <q-item
+            clickable
+            v-ripple
+          >
+            <q-item-section>
+              <span class="text-h6">网站设置</span>
+            </q-item-section>
+          </q-item>
+          <q-separator></q-separator>
+          <q-item
+            clickable
+            v-ripple
+          >
+            <q-item-section>
+              <q-toggle
+                v-model="https"
+                label="是否使用https"
+              />
+            </q-item-section>
+          </q-item>
+          <q-item
+            clickable
+            v-ripple
+          >
+            <q-item-section>
+              <span class="text-h6">视频源设置</span>
+            </q-item-section>
+          </q-item>
+          <q-separator></q-separator>
+          <q-item
+            clickable
+            v-ripple
+          >
+            <q-item-section>
+              <q-btn
+                color="primary"
+                label="导入视频源"
+                @click="gotoImport"
+              />
+            </q-item-section>
+          </q-item>
+          <q-item
+            clickable
+            v-ripple
+          >
+            <q-item-section>
+              <q-btn
+                color="red"
+                label="清空视频源"
+                @click="clearSource"
+              />
+            </q-item-section>
+          </q-item>
+        </q-list>
+      </q-scroll-area>
     </q-drawer>
 
     <q-page-container>
@@ -145,6 +196,11 @@ export default {
     };
   },
   created() {
+    const storeSiteList = this.$electronStore.get('siteList');
+    this.setSiteList(storeSiteList);
+    if (!this.siteList || this.siteList.length === 0) {
+      this.$router.replace('/import');
+    }
     ipc.on('from-mini', (event, message) => {
       this.gotoPlayer(message);
     });
@@ -166,7 +222,12 @@ export default {
     },
   },
   methods: {
-    ...mapMutations(['setCurrentSiteId', 'setCurrentClass', 'setCurrentVideo']),
+    ...mapMutations([
+      'setCurrentSiteId',
+      'setCurrentClass',
+      'setCurrentVideo',
+      'setSiteList',
+    ]),
     getClass() {
       this.loading = true;
       this.$axios(this.currentSite.httpsApi, {
@@ -199,6 +260,18 @@ export default {
     gotoPlayer(video) {
       this.setCurrentVideo(video);
       this.$router.push('/video');
+    },
+    async gotoImport() {
+      this.$router.replace({
+        path: 'import',
+        query: {
+          canclable: true,
+        },
+      });
+    },
+    clearSource() {
+      this.$electronStore.clear();
+      this.$router.replace('/import');
     },
   },
   computed: {

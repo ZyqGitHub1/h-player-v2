@@ -20,6 +20,8 @@
     "@quasar/extras": "^1.0.0",
     "axios": "^0.18.1",
     "electron-positioner": "^4.1.0",
+    "electron-store": "^4.0.0",
+    "fs-extra": "^8.1.0",
     "hls.js": "^0.12.4",
     "lodash": "^4.17.11",
     "normalize-url": "^4.3.0",
