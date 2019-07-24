@@ -1,6 +1,9 @@
 <template>
   <q-page padding>
-    <q-scroll-area style="height: calc(100vh - 198px);">
+    <q-scroll-area
+      style="height: calc(100vh - 198px);"
+      :thumb-style="thumbStyle"
+    >
       <div class="q-pa-md row items-start justify-center q-gutter-md">
         <q-card
           class="my-card cursor-pointer"
@@ -148,6 +151,15 @@ export default {
       https: state => state.app.https,
       keyWord: state => state.site.keyWord,
     }),
+    thumbStyle() {
+      return {
+        right: '2px',
+        borderRadius: '5px',
+        backgroundColor: '#027be3',
+        width: '5px',
+        opacity: 0.75,
+      };
+    },
   },
 };
 </script>
