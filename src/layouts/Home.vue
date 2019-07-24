@@ -67,24 +67,29 @@
         </div>
       </div>
       <q-separator />
-      <q-list separator>
-        <q-item
-          v-for="classInfo in videoClass"
-          :key="classInfo.$.id"
-          clickable
-          v-ripple
-          @click="changeClass(classInfo.$.id)"
-          :active="currentClass === classInfo.$.id"
-        >
-          <q-item-section>{{ classInfo._ }}</q-item-section>
-        </q-item>
-      </q-list>
-      <q-inner-loading :showing="loading">
-        <q-spinner-gears
-          size="50px"
-          color="primary"
-        />
-      </q-inner-loading>
+      <q-scroll-area
+        :thumb-style="thumbStyle"
+        class="class-list"
+      >
+        <q-list separator>
+          <q-item
+            v-for="classInfo in videoClass"
+            :key="classInfo.$.id"
+            clickable
+            v-ripple
+            @click="changeClass(classInfo.$.id)"
+            :active="currentClass === classInfo.$.id"
+          >
+            <q-item-section>{{ classInfo._ }}</q-item-section>
+          </q-item>
+        </q-list>
+        <q-inner-loading :showing="loading">
+          <q-spinner-gears
+            size="50px"
+            color="primary"
+          />
+        </q-inner-loading>
+      </q-scroll-area>
     </q-drawer>
 
     <q-drawer
@@ -298,6 +303,15 @@ export default {
         this.$store.commit('setHttps', value);
       },
     },
+    thumbStyle() {
+      return {
+        right: '2px',
+        borderRadius: '5px',
+        backgroundColor: '#027be3',
+        width: '5px',
+        opacity: 0.75,
+      };
+    },
   },
 };
 </script>
@@ -309,5 +323,9 @@ export default {
 
 .serch {
   margin-top: 24px;
+}
+
+.class-list {
+  height: calc(100% - 100px)
 }
 </style>
