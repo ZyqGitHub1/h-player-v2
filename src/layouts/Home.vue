@@ -67,24 +67,29 @@
         </div>
       </div>
       <q-separator />
-      <q-list separator>
-        <q-item
-          v-for="classInfo in videoClass"
-          :key="classInfo.$.id"
-          clickable
-          v-ripple
-          @click="changeClass(classInfo.$.id)"
-          :active="currentClass === classInfo.$.id"
-        >
-          <q-item-section>{{ classInfo._ }}</q-item-section>
-        </q-item>
-      </q-list>
-      <q-inner-loading :showing="loading">
-        <q-spinner-gears
-          size="50px"
-          color="primary"
-        />
-      </q-inner-loading>
+      <q-scroll-area
+        :thumb-style="thumbStyle"
+        class="class-list"
+      >
+        <q-list separator>
+          <q-item
+            v-for="classInfo in videoClass"
+            :key="classInfo.$.id"
+            clickable
+            v-ripple
+            @click="changeClass(classInfo.$.id)"
+            :active="currentClass === classInfo.$.id"
+          >
+            <q-item-section>{{ classInfo._ }}</q-item-section>
+          </q-item>
+        </q-list>
+        <q-inner-loading :showing="loading">
+          <q-spinner-gears
+            size="50px"
+            color="primary"
+          />
+        </q-inner-loading>
+      </q-scroll-area>
     </q-drawer>
 
     <q-drawer
@@ -92,12 +97,63 @@
       side="right"
       bordered
     >
-      <q-form class="q-gutter-md">
-        <q-toggle
-          v-model="https"
-          label="是否使用https"
-        />
-      </q-form>
+      <q-scroll-area class="fit">
+        <q-list>
+          <q-item
+            clickable
+            v-ripple
+          >
+            <q-item-section>
+              <span class="text-h6">网站设置</span>
+            </q-item-section>
+          </q-item>
+          <q-separator></q-separator>
+          <q-item
+            clickable
+            v-ripple
+          >
+            <q-item-section>
+              <q-toggle
+                v-model="https"
+                label="是否使用https"
+              />
+            </q-item-section>
+          </q-item>
+          <q-item
+            clickable
+            v-ripple
+          >
+            <q-item-section>
+              <span class="text-h6">视频源设置</span>
+            </q-item-section>
+          </q-item>
+          <q-separator></q-separator>
+          <q-item
+            clickable
+            v-ripple
+          >
+            <q-item-section>
+              <q-btn
+                color="primary"
+                label="导入视频源"
+                @click="gotoImport"
+              />
+            </q-item-section>
+          </q-item>
+          <q-item
+            clickable
+            v-ripple
+          >
+            <q-item-section>
+              <q-btn
+                color="red"
+                label="清空视频源"
+                @click="clearSource"
+              />
+            </q-item-section>
+          </q-item>
+        </q-list>
+      </q-scroll-area>
     </q-drawer>
 
     <q-page-container>
@@ -128,6 +184,10 @@ import { mapState, mapMutations, mapGetters } from 'vuex';
 import util from 'util';
 import { parseString } from 'xml2js';
 
+const Store = require('electron-store');
+
+const store = new Store();
+
 const ipc = require('electron').ipcRenderer;
 
 const parseStringSync = util.promisify(parseString);
@@ -144,20 +204,31 @@ export default {
       httoOrHttps: false,
     };
   },
+  beforeRouteEnter(from, to, next) {
+    const storeSiteList = store.get('siteList');
+    if (!storeSiteList || storeSiteList.length === 0) {
+      next('/import');
+    }
+
+    next();
+  },
   created() {
+    const storeSiteList = this.$electronStore.get('siteList');
+    this.setSiteList(storeSiteList);
     ipc.on('from-mini', (event, message) => {
       this.gotoPlayer(message);
     });
+    this.setCurrentClass('all');
+    this.setCurrentSiteId(this.tab);
+    this.getClass();
+    this.$router.push('/');
   },
   watch: {
-    tab: {
-      handler() {
-        this.setCurrentClass('all');
-        this.setCurrentSiteId(this.tab);
-        this.getClass();
-        this.$router.push('/');
-      },
-      immediate: true,
+    tab() {
+      this.setCurrentClass('all');
+      this.setCurrentSiteId(this.tab);
+      this.getClass();
+      this.$router.push('/');
     },
     keyWord() {
       if (this.keyWord === null) {
@@ -166,7 +237,12 @@ export default {
     },
   },
   methods: {
-    ...mapMutations(['setCurrentSiteId', 'setCurrentClass', 'setCurrentVideo']),
+    ...mapMutations([
+      'setCurrentSiteId',
+      'setCurrentClass',
+      'setCurrentVideo',
+      'setSiteList',
+    ]),
     getClass() {
       this.loading = true;
       this.$axios(this.currentSite.httpsApi, {
@@ -200,6 +276,18 @@ export default {
       this.setCurrentVideo(video);
       this.$router.push('/video');
     },
+    async gotoImport() {
+      this.$router.replace({
+        path: 'import',
+        query: {
+          canclable: true,
+        },
+      });
+    },
+    clearSource() {
+      this.$electronStore.clear();
+      this.$router.replace('/import');
+    },
   },
   computed: {
     ...mapGetters(['currentSite']),
@@ -215,6 +303,15 @@ export default {
         this.$store.commit('setHttps', value);
       },
     },
+    thumbStyle() {
+      return {
+        right: '2px',
+        borderRadius: '5px',
+        backgroundColor: '#027be3',
+        width: '5px',
+        opacity: 0.75,
+      };
+    },
   },
 };
 </script>
@@ -226,5 +323,9 @@ export default {
 
 .serch {
   margin-top: 24px;
+}
+
+.class-list {
+  height: calc(100% - 100px)
 }
 </style>

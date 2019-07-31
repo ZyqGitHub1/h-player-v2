@@ -10,7 +10,7 @@ module.exports = function (ctx) {
   return {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
-    boot: ['i18n', 'axios', 'vue-navigation'],
+    boot: ['i18n', 'axios', 'vue-navigation', 'electron-store'],
 
     css: ['app.styl'],
 
@@ -62,6 +62,8 @@ module.exports = function (ctx) {
         'QPageSticky',
         'QInput',
         'QSeparator',
+        'QChip',
+        'QTooltip',
       ],
 
       directives: ['Ripple'],

@@ -1,9 +1,12 @@
 <template>
   <q-page padding>
-    <q-scroll-area style="height: calc(100vh - 198px);">
+    <q-scroll-area
+      style="height: calc(100vh - 198px);"
+      :thumb-style="thumbStyle"
+    >
       <div class="q-pa-md row items-start justify-center q-gutter-md">
         <q-card
-          class="my-card"
+          class="my-card cursor-pointer"
           v-for="video in videoList"
           :key="video.id"
           @click="gotoPlayer(video)"
@@ -13,16 +16,35 @@
             spinner-color="red"
             style="height: 200px;width: 290px"
           >
-            <div class="absolute-bottom text-subtitle1 text-center q-pa-xs">{{video.name}}</div>
+            <div
+              class="absolute-bottom ellipsis text-subtitle1 text-center q-pa-xs"
+            >{{video.name}}</div>
             <template v-slot:error>
               <div class="absolute-full flex flex-center bg-negative text-white">
                 <span>Cannot load image</span>
+                <div
+                  class="absolute-bottom ellipsis text-subtitle1 text-center q-pa-xs"
+                >{{video.name}}</div>
               </div>
             </template>
           </q-img>
           <q-card-section>
-            <div class="text-h6">{{video.type}}</div>
-            <div class="text-subtitle2">{{ video.last }}</div>
+            <div class="text-h6 ellipsis title">
+              {{video.name}}
+              <q-tooltip>{{video.name}}</q-tooltip>
+            </div>
+            <q-chip
+              square
+              color="teal"
+              text-color="white"
+              icon="bookmark"
+            >{{video.type}}</q-chip>
+            <q-chip
+              square
+              color="teal"
+              text-color="white"
+              icon="event"
+            >{{video.last}}</q-chip>
           </q-card-section>
         </q-card>
       </div>
@@ -71,13 +93,16 @@ export default {
       this.getVideoList(value);
     },
     currentSite() {
+      this.pagination.page = 1;
       this.getVideoList(1);
     },
     currentClass() {
+      this.pagination.page = 1;
       this.getVideoList(1);
     },
     keyWord(newKeyWord, oldKeyWord) {
       if (newKeyWord !== oldKeyWord) {
+        this.pagination.page = 1;
         this.getVideoList(1);
       }
     },
@@ -106,7 +131,7 @@ export default {
         .then(res => parseStringSync(res.data, { explicitArray: false }))
         .then((data) => {
           this.videoList = data.rss.list.video;
-          this.pagination.total = _toInteger(data.rss.list.$.recordcount);
+          this.pagination.total = _toInteger(data.rss.list.$.pagecount);
         })
         .catch(console.error)
         .finally(() => {
@@ -126,13 +151,26 @@ export default {
       https: state => state.app.https,
       keyWord: state => state.site.keyWord,
     }),
+    thumbStyle() {
+      return {
+        right: '2px',
+        borderRadius: '5px',
+        backgroundColor: '#027be3',
+        width: '5px',
+        opacity: 0.75,
+      };
+    },
   },
 };
 </script>
 
-<style>
+<style lang="stylus">
 .my-card {
   width: 100%;
   max-width: 290px;
+
+  .title {
+    margin: 4px;
+  }
 }
 </style>
