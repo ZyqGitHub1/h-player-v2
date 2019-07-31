@@ -43,12 +43,12 @@ See [Configuration Reference](https://quasar.dev/quasar-cli/quasar-conf-js).
 
 ## 使用方法:
 
-1. 到release下载最新版本的压缩包
-2. 解压文件到任意目录
+1. 到release下载最新版本的压缩包 <a target="_blank" href ="https://raw.githubusercontent.com/ZyqGitHub1/h-player-v2/master/screenshot/download.gif">点击查看gif</a>
+2. 解压文件到任意目录 <a target="_blank" href ="https://raw.githubusercontent.com/ZyqGitHub1/h-player-v2/master/screenshot/unzip.gif">点击查看gif</a>
 3. 运行解压目录下的h-player.exe文件
 4. 未导入视频源时会显示导入视频源界面
 5. 点击`暂无视频源，点击选择文件导入`按钮
-6. 选择视频源文件导入。***示例文件位于[gist](https://gist.github.com/ZyqGitHub1/104becf19ebb84f601e3d32b59418944)***
+6. 选择视频源文件导入。 <a target="_blank" href ="https://raw.githubusercontent.com/ZyqGitHub1/h-player-v2/master/screenshot/import-source.gif">点击查看gif</a> ***示例文件位于[gist](https://gist.github.com/ZyqGitHub1/104becf19ebb84f601e3d32b59418944)*** <a target="_blank" href ="https://raw.githubusercontent.com/ZyqGitHub1/h-player-v2/master/screenshot/download-sorce.gif">点击查看gif</a>
 7. have fun
 
 > ### Note
