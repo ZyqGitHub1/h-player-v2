@@ -54,6 +54,7 @@ See [Configuration Reference](https://quasar.dev/quasar-cli/quasar-conf-js).
 > ### Note
 >
 > 1. 视频源只需导入一次，可以在设置界面重新导入或清空视频源
+> 2. 如果下载示例视频源文件出现网络问题，请参考 [#14](https://github.com/ZyqGitHub1/h-player-v2/issues/14#issuecomment-517104860)
 
 ## TODO
 
