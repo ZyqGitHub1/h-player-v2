@@ -1,71 +1,77 @@
 <template>
-  <q-page padding>
-    <q-scroll-area
-      style="height: calc(100vh - 198px);"
-      :thumb-style="thumbStyle"
-    >
-      <div class="q-pa-md row items-start justify-center q-gutter-md">
-        <q-card
-          class="my-card cursor-pointer"
-          v-for="video in videoList"
-          :key="video.id"
-          @click="gotoPlayer(video)"
-        >
-          <q-img
-            :src="video.pic"
-            spinner-color="red"
-            style="height: 200px;width: 290px"
+  <q-page
+    padding
+    class="flex"
+  >
+    <scroll-warp>
+      <q-scroll-area
+        :thumb-style="thumbStyle"
+        class="fit"
+      >
+        <div class="q-pa-md row items-start justify-center q-gutter-md">
+          <q-card
+            class="my-card cursor-pointer"
+            v-for="video in videoList"
+            :key="video.id"
+            @click="gotoPlayer(video)"
           >
-            <div
-              class="absolute-bottom ellipsis text-subtitle1 text-center q-pa-xs"
-            >{{video.name}}</div>
-            <template v-slot:error>
-              <div class="absolute-full flex flex-center bg-negative text-white">
-                <span>Cannot load image</span>
-                <div
-                  class="absolute-bottom ellipsis text-subtitle1 text-center q-pa-xs"
-                >{{video.name}}</div>
+            <q-img
+              :src="video.pic"
+              spinner-color="red"
+              style="height: 200px;width: 290px"
+            >
+              <div
+                class="absolute-bottom ellipsis text-subtitle1 text-center q-pa-xs"
+              >{{video.name}}</div>
+              <template v-slot:error>
+                <div class="absolute-full flex flex-center bg-negative text-white">
+                  <span>Cannot load image</span>
+                  <div
+                    class="absolute-bottom ellipsis text-subtitle1 text-center q-pa-xs"
+                  >{{video.name}}</div>
+                </div>
+              </template>
+            </q-img>
+            <q-card-section>
+              <div class="text-h6 ellipsis title">
+                {{video.name}}
+                <q-tooltip>{{video.name}}</q-tooltip>
               </div>
-            </template>
-          </q-img>
-          <q-card-section>
-            <div class="text-h6 ellipsis title">
-              {{video.name}}
-              <q-tooltip>{{video.name}}</q-tooltip>
-            </div>
-            <q-chip
-              square
-              color="teal"
-              text-color="white"
-              icon="bookmark"
-            >{{video.type}}</q-chip>
-            <q-chip
-              square
-              color="teal"
-              text-color="white"
-              icon="event"
-            >{{video.last}}</q-chip>
-          </q-card-section>
-        </q-card>
-      </div>
-      <div class="q-pa-lg flex flex-center">
-        <q-pagination
-          v-model="pagination.page"
-          :max="pagination.total"
-          :input="true"
-        ></q-pagination>
-      </div>
-      <q-inner-loading :showing="loading">
-        <q-spinner-gears
-          size="50px"
-          color="primary"
-        />
-      </q-inner-loading>
-    </q-scroll-area>
+              <q-chip
+                square
+                color="teal"
+                text-color="white"
+                icon="bookmark"
+              >{{video.type}}</q-chip>
+              <q-chip
+                square
+                color="teal"
+                text-color="white"
+                icon="event"
+              >{{video.last}}</q-chip>
+            </q-card-section>
+          </q-card>
+        </div>
+        <div class="q-pa-lg flex flex-center">
+          <q-pagination
+            v-model="pagination.page"
+            :max="pagination.total"
+            :input="true"
+          ></q-pagination>
+        </div>
+        <q-inner-loading :showing="loading">
+          <q-spinner-gears
+            size="50px"
+            color="primary"
+          />
+        </q-inner-loading>
+      </q-scroll-area>
+    </scroll-warp>
   </q-page>
 </template>
 
 <script>
+import scrollWarp from 'components/scrollWarp';
 import util from 'util';
 import { parseString } from 'xml2js';
 import _toInteger from 'lodash/toInteger';
@@ -82,10 +88,17 @@ export default {
         page: 1,
         total: 0,
       },
+      scrollStyle: {
+        height: 0,
+      },
     };
+  },
+  components: {
+    scrollWarp,
   },
   mounted() {
     this.getVideoList(1);
+    console.log(this.layout);
   },
   watch: {
     // eslint-disable-next-line func-names
