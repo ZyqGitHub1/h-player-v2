@@ -7,6 +7,43 @@
       elevated
       class="bg-primary text-white"
     >
+      <q-bar class="q-electron-drag">
+        <q-avatar
+          square
+          color="orange"
+        >H</q-avatar>
+        <div>H-PLAYER</div>
+
+        <q-space />
+
+        <q-btn
+          dense
+          flat
+          round
+          icon="settings"
+          @click="right = !right"
+        />
+
+        <q-btn
+          dense
+          flat
+          icon="minimize"
+          @click="minimize"
+        />
+        <q-btn
+          dense
+          flat
+          icon="crop_square"
+          @click="maximize"
+        />
+        <q-btn
+          dense
+          flat
+          icon="close"
+          @click="closeApp"
+        />
+      </q-bar>
+
       <q-toolbar>
         <q-btn
           dense
@@ -16,20 +53,14 @@
           @click="left = !left"
         />
 
-        <q-toolbar-title>
-          <q-avatar
-            square
-            size="24px"
-            color="orange"
-          >H</q-avatar>
-        </q-toolbar-title>
+        <q-space></q-space>
 
         <q-btn
           dense
           flat
           round
-          icon="settings"
-          @click="right = !right"
+          icon="search"
+          @click="left = !left"
         />
       </q-toolbar>
 
@@ -288,6 +319,29 @@ export default {
       this.$electronStore.clear();
       this.$router.replace('/import');
     },
+    minimize() {
+      if (process.env.MODE === 'electron') {
+        this.$q.electron.remote.BrowserWindow.getFocusedWindow().minimize();
+      }
+    },
+
+    maximize() {
+      if (process.env.MODE === 'electron') {
+        const win = this.$q.electron.remote.BrowserWindow.getFocusedWindow();
+
+        if (win.isMaximized()) {
+          win.unmaximize();
+        } else {
+          win.maximize();
+        }
+      }
+    },
+
+    closeApp() {
+      if (process.env.MODE === 'electron') {
+        this.$q.electron.remote.BrowserWindow.getFocusedWindow().close();
+      }
+    },
   },
   computed: {
     ...mapGetters(['currentSite']),
@@ -317,15 +371,14 @@ export default {
 </script>
 
 <style lang="stylus">
-.q-layout, .q-page {
-  min-height: inherit !important;
-}
-
+// .q-layout, .q-page {
+// min-height: inherit !important;
+// }
 .serch {
   margin-top: 24px;
 }
 
 .class-list {
-  height: calc(100% - 100px)
+  height: calc(100% - 100px);
 }
 </style>

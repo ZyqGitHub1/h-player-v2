@@ -1,7 +1,8 @@
 <template>
-  <q-page padding>
+  <q-page
+    padding
+  >
     <q-scroll-area
-      style="height: calc(100vh - 198px);"
       :thumb-style="thumbStyle"
     >
       <div class="q-pa-md row items-start justify-center q-gutter-md">
@@ -16,9 +17,7 @@
             spinner-color="red"
             style="height: 200px;width: 290px"
           >
-            <div
-              class="absolute-bottom ellipsis text-subtitle1 text-center q-pa-xs"
-            >{{video.name}}</div>
+            <div class="absolute-bottom ellipsis text-subtitle1 text-center q-pa-xs">{{video.name}}</div>
             <template v-slot:error>
               <div class="absolute-full flex flex-center bg-negative text-white">
                 <span>Cannot load image</span>
@@ -62,6 +61,7 @@
         />
       </q-inner-loading>
     </q-scroll-area>
+     <q-resize-observer @resize="onResize" />
   </q-page>
 </template>
 
@@ -82,10 +82,14 @@ export default {
         page: 1,
         total: 0,
       },
+      scrollStyle: {
+        height: 0,
+      },
     };
   },
   mounted() {
     this.getVideoList(1);
+    console.log(this.layout);
   },
   watch: {
     // eslint-disable-next-line func-names
@@ -142,6 +146,9 @@ export default {
     gotoPlayer(video) {
       this.setCurrentVideo(video);
       this.$router.push('/video');
+    },
+    onResize(size) {
+      console.log(size);
     },
   },
   computed: {
