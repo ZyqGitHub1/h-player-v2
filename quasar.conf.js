@@ -64,6 +64,14 @@ module.exports = function (ctx) {
         'QSeparator',
         'QChip',
         'QTooltip',
+        'QBar',
+        'QSpace',
+        // table
+        'QTable',
+        'QTh',
+        'QTr',
+        'QTd',
+        'QExpansionItem',
       ],
 
       directives: ['Ripple'],
@@ -73,8 +81,8 @@ module.exports = function (ctx) {
       config: {
         loadingBar: {
           color: 'purple',
-          size: '10px',
-          position: 'top',
+          size: '5px',
+          position: 'bottom',
           skipHijack: true,
         },
       },
