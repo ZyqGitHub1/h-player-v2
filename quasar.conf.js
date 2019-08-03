@@ -66,6 +66,12 @@ module.exports = function (ctx) {
         'QTooltip',
         'QBar',
         'QSpace',
+        // table
+        'QTable',
+        'QTh',
+        'QTr',
+        'QTd',
+        'QExpansionItem',
       ],
 
       directives: ['Ripple'],
