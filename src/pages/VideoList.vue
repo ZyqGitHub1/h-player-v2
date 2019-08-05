@@ -4,10 +4,38 @@
     class="flex"
   >
     <scroll-warp>
+      <div
+        v-show="error"
+        class="fit flex justify-center items-center"
+      >
+        <div class="text-center">
+          <q-icon
+            name="warning"
+            class="text-red"
+            style="font-size: 4rem;"
+          />
+          <div>加载视频列表失败</div>
+        </div>
+      </div>
       <q-scroll-area
+        v-show="!error"
         :thumb-style="thumbStyle"
         class="fit"
       >
+        <div class="row justify-center">
+          <div class="col-10">
+            <q-input
+              clearable
+              v-model="keyWord"
+              label="请输入关键字"
+              @keyup.enter="search"
+            >
+              <template v-slot:prepend>
+                <q-icon name="search" />
+              </template>
+            </q-input>
+          </div>
+        </div>
         <div class="q-pa-md row items-start justify-center q-gutter-md">
           <q-card
             class="my-card cursor-pointer"
@@ -59,13 +87,13 @@
             :input="true"
           ></q-pagination>
         </div>
-        <q-inner-loading :showing="loading">
-          <q-spinner-gears
-            size="50px"
-            color="primary"
-          />
-        </q-inner-loading>
       </q-scroll-area>
+      <q-inner-loading :showing="loading">
+        <q-spinner-gears
+          size="4rem"
+          color="primary"
+        />
+      </q-inner-loading>
     </scroll-warp>
   </q-page>
 </template>
@@ -83,6 +111,8 @@ export default {
   data() {
     return {
       loading: true,
+      error: false,
+      keyWord: '',
       videoList: [],
       pagination: {
         page: 1,
@@ -97,8 +127,8 @@ export default {
     scrollWarp,
   },
   mounted() {
+    this.keyWord = '';
     this.getVideoList(1);
-    console.log(this.layout);
   },
   watch: {
     // eslint-disable-next-line func-names
@@ -107,15 +137,15 @@ export default {
     },
     currentSite() {
       this.pagination.page = 1;
+      this.keyWord = '';
       this.getVideoList(1);
     },
     currentClass() {
       this.pagination.page = 1;
       this.getVideoList(1);
     },
-    keyWord(newKeyWord, oldKeyWord) {
-      if (newKeyWord !== oldKeyWord) {
-        this.pagination.page = 1;
+    keyWord(value) {
+      if (!value) {
         this.getVideoList(1);
       }
     },
@@ -124,6 +154,7 @@ export default {
     ...mapMutations(['setCurrentVideo']),
     getVideoList(page) {
       this.loading = true;
+      this.error = false;
       this.$q.loadingBar.start();
       const params = {
         ac: 'videolist',
@@ -146,7 +177,10 @@ export default {
           this.videoList = data.rss.list.video;
           this.pagination.total = _toInteger(data.rss.list.$.pagecount);
         })
-        .catch(console.error)
+        .catch((error) => {
+          console.error(error);
+          this.error = true;
+        })
         .finally(() => {
           this.loading = false;
           this.$q.loadingBar.stop();
@@ -156,13 +190,16 @@ export default {
       this.setCurrentVideo(video);
       this.$router.push('/video');
     },
+    search() {
+      this.pagination.page = 1;
+      this.getVideoList(1);
+    },
   },
   computed: {
     ...mapGetters(['currentSite']),
     ...mapState({
       currentClass: state => state.site.currentClass,
       https: state => state.app.https,
-      keyWord: state => state.site.keyWord,
     }),
     thumbStyle() {
       return {

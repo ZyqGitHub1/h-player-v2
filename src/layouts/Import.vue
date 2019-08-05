@@ -2,42 +2,7 @@
   <q-layout view="hHh Lpr fFf">
     <!-- (Optional) The Header -->
     <q-header elevated>
-      <q-bar class="q-electron-drag">
-        <q-avatar
-          square
-          color="orange"
-        >H</q-avatar>
-        <div>H-PLAYER</div>
-
-        <q-space />
-
-        <q-btn
-          dense
-          flat
-          round
-          icon="settings"
-          @click="right = !right"
-        />
-
-        <q-btn
-          dense
-          flat
-          icon="minimize"
-          @click="minimize"
-        />
-        <q-btn
-          dense
-          flat
-          icon="crop_square"
-          @click="maximize"
-        />
-        <q-btn
-          dense
-          flat
-          icon="close"
-          @click="closeApp"
-        />
-      </q-bar>
+      <title-bar></title-bar>
     </q-header>
     <!-- (Optional) The Footer -->
     <q-footer>
@@ -73,6 +38,7 @@
 </template>
 
 <script>
+import titleBar from 'components/titlebar';
 import { mapMutations, mapState } from 'vuex';
 import fs from 'fs-extra';
 
@@ -84,6 +50,9 @@ export default {
     return {
       leftDrawer: true,
     };
+  },
+  components: {
+    titleBar,
   },
   computed: {
     ...mapState({

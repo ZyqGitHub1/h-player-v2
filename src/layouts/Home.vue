@@ -7,42 +7,7 @@
       elevated
       class="bg-primary text-white"
     >
-      <q-bar class="q-electron-drag">
-        <q-avatar
-          square
-          color="orange"
-        >H</q-avatar>
-        <div>H-PLAYER</div>
-
-        <q-space />
-
-        <q-btn
-          dense
-          flat
-          round
-          icon="settings"
-          @click="right = !right"
-        />
-
-        <q-btn
-          dense
-          flat
-          icon="minimize"
-          @click="minimize"
-        />
-        <q-btn
-          dense
-          flat
-          icon="crop_square"
-          @click="maximize"
-        />
-        <q-btn
-          dense
-          flat
-          icon="close"
-          @click="closeApp"
-        />
-      </q-bar>
+      <title-bar></title-bar>
 
       <q-toolbar>
         <q-btn
@@ -82,45 +47,47 @@
       side="left"
       bordered
     >
-      <div class="row serch">
-        <div class="col">
-          <q-input
-            clearable
-            borderless
-            v-model="keyWord"
-            label="请输入关键字"
-            @keyup.enter="search"
-          >
-            <template v-slot:prepend>
-              <q-icon name="search" />
-            </template>
-          </q-input>
-        </div>
-      </div>
-      <q-separator />
-      <q-scroll-area
-        :thumb-style="thumbStyle"
-        class="class-list"
+      <div
+        class="fit"
+        v-show="!error"
       >
-        <q-list separator>
-          <q-item
-            v-for="classInfo in videoClass"
-            :key="classInfo.$.id"
-            clickable
-            v-ripple
-            @click="changeClass(classInfo.$.id)"
-            :active="currentClass === classInfo.$.id"
-          >
-            <q-item-section>{{ classInfo._ }}</q-item-section>
-          </q-item>
-        </q-list>
+        <q-scroll-area
+          :thumb-style="thumbStyle"
+          class="class-list"
+        >
+          <q-list separator>
+            <q-item
+              v-for="classInfo in videoClass"
+              :key="classInfo.$.id"
+              clickable
+              v-ripple
+              @click="changeClass(classInfo.$.id)"
+              :active="currentClass === classInfo.$.id"
+            >
+              <q-item-section>{{ classInfo._ }}</q-item-section>
+            </q-item>
+          </q-list>
+        </q-scroll-area>
         <q-inner-loading :showing="loading">
           <q-spinner-gears
-            size="50px"
+            size="4rem"
             color="primary"
           />
         </q-inner-loading>
-      </q-scroll-area>
+      </div>
+      <div
+        v-show="error"
+        class="fit flex justify-center items-center"
+      >
+        <div class="text-center">
+          <q-icon
+            name="warning"
+            class="text-red"
+            style="font-size: 4rem;"
+          />
+          <div>加载分类失败</div>
+        </div>
+      </div>
     </q-drawer>
 
     <q-drawer
@@ -211,6 +178,7 @@
 </template>
 
 <script>
+import titleBar from 'components/titlebar';
 import { mapState, mapMutations, mapGetters } from 'vuex';
 import util from 'util';
 import { parseString } from 'xml2js';
@@ -219,21 +187,22 @@ const Store = require('electron-store');
 
 const store = new Store();
 
-const ipc = require('electron').ipcRenderer;
-
 const parseStringSync = util.promisify(parseString);
 
 export default {
   data() {
     return {
       loading: true,
-      keyWord: '',
+      error: false,
       tab: 1,
       videoClass: [],
       left: this.$q.platform.is.desktop,
       right: false,
       httoOrHttps: false,
     };
+  },
+  components: {
+    titleBar,
   },
   beforeRouteEnter(from, to, next) {
     const storeSiteList = store.get('siteList');
@@ -246,6 +215,7 @@ export default {
   created() {
     const storeSiteList = this.$electronStore.get('siteList');
     this.setSiteList(storeSiteList);
+    const ipc = this.$q.electron.ipcRenderer;
     ipc.on('from-mini', (event, message) => {
       this.gotoPlayer(message);
     });
@@ -261,11 +231,6 @@ export default {
       this.getClass();
       this.$router.push('/');
     },
-    keyWord() {
-      if (this.keyWord === null) {
-        this.$store.commit('setKeyWord', this.keyWord);
-      }
-    },
   },
   methods: {
     ...mapMutations([
@@ -276,6 +241,7 @@ export default {
     ]),
     getClass() {
       this.loading = true;
+      this.error = false;
       this.$axios(this.currentSite.httpsApi, {
         params: {
           ac: 'list',
@@ -291,7 +257,10 @@ export default {
             },
           });
         })
-        .catch(console.error)
+        .catch((err) => {
+          this.error = true;
+          console.log(err);
+        })
         .finally(() => {
           this.loading = false;
         });
@@ -299,9 +268,6 @@ export default {
     changeClass(currentClass) {
       this.setCurrentClass(currentClass);
       this.$router.push('/');
-    },
-    search() {
-      this.$store.commit('setKeyWord', this.keyWord);
     },
     gotoPlayer(video) {
       this.setCurrentVideo(video);
@@ -318,29 +284,6 @@ export default {
     clearSource() {
       this.$electronStore.clear();
       this.$router.replace('/import');
-    },
-    minimize() {
-      if (process.env.MODE === 'electron') {
-        this.$q.electron.remote.BrowserWindow.getFocusedWindow().minimize();
-      }
-    },
-
-    maximize() {
-      if (process.env.MODE === 'electron') {
-        const win = this.$q.electron.remote.BrowserWindow.getFocusedWindow();
-
-        if (win.isMaximized()) {
-          win.unmaximize();
-        } else {
-          win.maximize();
-        }
-      }
-    },
-
-    closeApp() {
-      if (process.env.MODE === 'electron') {
-        this.$q.electron.remote.BrowserWindow.getFocusedWindow().close();
-      }
     },
   },
   computed: {
