@@ -17,6 +17,11 @@ const routes = [
     children: [{ path: '', component: () => import('pages/MiniVideo') }],
   },
   {
+    path: '/direct-video',
+    component: () => import('layouts/Mini'),
+    children: [{ path: '', component: () => import('pages/directVideo') }],
+  },
+  {
     path: '/config',
     component: () => import('layouts/Config'),
     // children: [{ path: '', component: () => import('pages/MiniVideo') }],

@@ -132,7 +132,12 @@
 import titleBar from 'components/titlebar';
 import { mapState, mapMutations, mapGetters } from 'vuex';
 import util from 'util';
+import isAbsoluteUrl from 'is-absolute-url';
 import { parseString } from 'xml2js';
+
+import { URL } from 'url';
+import path from 'path';
+import { stringify } from 'query-string';
 
 const Store = require('electron-store');
 
@@ -232,8 +237,50 @@ export default {
       this.setCurrentVideo(video);
       this.$router.push('/video');
     },
+    directVideo() {
+      const { BrowserWindow, getCurrentWindow } = this.$q.electron.remote;
+      const videoInfo = JSON.stringify({
+        url: this.keyWord,
+      });
+      const encodeUrl = stringify({ video: videoInfo });
+      const parentWindow = getCurrentWindow();
+      const win = new BrowserWindow({
+        width: 800,
+        height: 600,
+        useContentSize: true,
+        webPreferences: {
+          nodeIntegration: true,
+          webSecurity: false,
+        },
+        parent: parentWindow,
+      });
+      win.removeMenu();
+      win.loadURL(`${process.env.APP_URL}#/direct-video?${encodeUrl}`);
+    },
     search() {
-      this.$store.commit('setKeyWord', this.keyWord);
+      if (isAbsoluteUrl(this.keyWord)) {
+        try {
+          const url = new URL(this.keyWord);
+          const { pathname } = url;
+          const extname = path.extname(pathname);
+          if (extname === '.m3u8') {
+            this.$q.dialog({
+              title: '播放',
+              message: '检测到搜索参数是hls流链接，是否播放',
+              cancel: true,
+              persistent: true,
+            }).onOk(() => {
+              this.directVideo();
+            }).onCancel(() => {
+              this.$store.commit('setKeyWord', this.keyWord);
+            });
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      } else {
+        this.$store.commit('setKeyWord', this.keyWord);
+      }
     },
   },
   computed: {
