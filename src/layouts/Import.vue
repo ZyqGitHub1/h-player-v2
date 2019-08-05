@@ -2,42 +2,7 @@
   <q-layout view="hHh Lpr fFf">
     <!-- (Optional) The Header -->
     <q-header elevated>
-      <q-bar class="q-electron-drag">
-        <q-avatar
-          square
-          color="orange"
-        >H</q-avatar>
-        <div>H-PLAYER</div>
-
-        <q-space />
-
-        <q-btn
-          dense
-          flat
-          round
-          icon="settings"
-          @click="right = !right"
-        />
-
-        <q-btn
-          dense
-          flat
-          icon="minimize"
-          @click="minimize"
-        />
-        <q-btn
-          dense
-          flat
-          icon="crop_square"
-          @click="maximize"
-        />
-        <q-btn
-          dense
-          flat
-          icon="close"
-          @click="closeApp"
-        />
-      </q-bar>
+      <title-bar @config="configClick"></title-bar>
     </q-header>
     <!-- (Optional) The Footer -->
     <q-footer>
@@ -52,20 +17,21 @@
       </q-toolbar>
     </q-footer>
     <q-page-container>
-      <q-page>
-        <div class="flex flex-center import">
+      <q-page class="flex">
+        <div style="flex: auto" class="flex justify-center items-center">
           <q-btn
             color="primary"
             label="暂无视频源，点击选择文件导入"
             @click="openDialog"
           />
+          <span class="q-pa-sm">或前往</span>
           <q-btn
-            v-if="canclable"
-            class="cancl"
-            color="red"
-            label="取消"
-            @click="$router.push('/')"
+            color="primary"
+            icon="settings"
+            label="设置"
+            @click="configClick"
           />
+          <span class="q-pa-sm">页面手动添加</span>
         </div>
       </q-page>
     </q-page-container>
@@ -73,29 +39,24 @@
 </template>
 
 <script>
+import titleBar from 'components/titlebar';
 import { mapMutations, mapState } from 'vuex';
 import fs from 'fs-extra';
 
-const { dialog } = require('electron').remote;
-
 export default {
   name: 'Import',
-  data() {
-    return {
-      leftDrawer: true,
-    };
+  components: {
+    titleBar,
   },
   computed: {
     ...mapState({
       siteList: state => state.site.siteList,
     }),
-    canclable() {
-      return this.$route.query.canclable;
-    },
   },
   methods: {
     ...mapMutations(['setSiteList']),
     async openDialog() {
+      const { dialog } = this.$q.electron.remote;
       const dialogResult = dialog.showOpenDialog({
         properties: ['openFile'],
         filters: [{ name: 'JSON', extensions: ['json'] }],
@@ -107,39 +68,12 @@ export default {
         this.$router.push('/');
       }
     },
-    minimize() {
-      if (process.env.MODE === 'electron') {
-        this.$q.electron.remote.BrowserWindow.getFocusedWindow().minimize();
-      }
-    },
-
-    maximize() {
-      if (process.env.MODE === 'electron') {
-        const win = this.$q.electron.remote.BrowserWindow.getFocusedWindow();
-
-        if (win.isMaximized()) {
-          win.unmaximize();
-        } else {
-          win.maximize();
-        }
-      }
-    },
-
-    closeApp() {
-      if (process.env.MODE === 'electron') {
-        this.$q.electron.remote.BrowserWindow.getFocusedWindow().close();
-      }
+    configClick() {
+      this.$router.push('/config');
     },
   },
 };
 </script>
 
 <style lang="stylus">
-.import {
-  height: calc(100vh - 100px);
-}
-
-.cancl {
-  margin-left: 20px;
-}
 </style>

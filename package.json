@@ -1,6 +1,6 @@
 {
   "name": "h-player",
-  "version": "0.0.1",
+  "version": "0.6.0",
   "description": "A Quasar Framework app",
   "productName": "h-player",
   "cordovaId": "org.cordova.quasar.app",
@@ -23,7 +23,7 @@
     "electron-store": "^4.0.0",
     "fs-extra": "^8.1.0",
     "hls.js": "^0.12.4",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.15",
     "normalize-url": "^4.3.0",
     "plyr": "^3.5.6",
     "quasar": "^1.0.0",

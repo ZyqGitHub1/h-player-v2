@@ -16,6 +16,11 @@ const routes = [
     component: () => import('layouts/Mini'),
     children: [{ path: '', component: () => import('pages/MiniVideo') }],
   },
+  {
+    path: '/config',
+    component: () => import('layouts/Config'),
+    // children: [{ path: '', component: () => import('pages/MiniVideo') }],
+  },
 ];
 
 // Always leave this as last one

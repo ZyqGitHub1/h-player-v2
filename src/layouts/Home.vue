@@ -7,42 +7,7 @@
       elevated
       class="bg-primary text-white"
     >
-      <q-bar class="q-electron-drag">
-        <q-avatar
-          square
-          color="orange"
-        >H</q-avatar>
-        <div>H-PLAYER</div>
-
-        <q-space />
-
-        <q-btn
-          dense
-          flat
-          round
-          icon="settings"
-          @click="right = !right"
-        />
-
-        <q-btn
-          dense
-          flat
-          icon="minimize"
-          @click="minimize"
-        />
-        <q-btn
-          dense
-          flat
-          icon="crop_square"
-          @click="maximize"
-        />
-        <q-btn
-          dense
-          flat
-          icon="close"
-          @click="closeApp"
-        />
-      </q-bar>
+      <title-bar @config="configClick"></title-bar>
 
       <q-toolbar>
         <q-btn
@@ -55,13 +20,28 @@
 
         <q-space></q-space>
 
-        <q-btn
+        <q-input
+          dark
           dense
-          flat
-          round
-          icon="search"
-          @click="left = !left"
-        />
+          standout
+          v-model="keyWord"
+          input-class="text-right"
+          class="q-ml-md"
+          @keyup.enter="search"
+        >
+          <template v-slot:append>
+            <q-icon
+              v-if="keyWord === ''"
+              name="search"
+            />
+            <q-icon
+              v-else
+              name="clear"
+              class="cursor-pointer"
+              @click="keyWord = ''"
+            />
+          </template>
+        </q-input>
       </q-toolbar>
 
       <q-tabs
@@ -82,109 +62,47 @@
       side="left"
       bordered
     >
-      <div class="row serch">
-        <div class="col">
-          <q-input
-            clearable
-            borderless
-            v-model="keyWord"
-            label="请输入关键字"
-            @keyup.enter="search"
-          >
-            <template v-slot:prepend>
-              <q-icon name="search" />
-            </template>
-          </q-input>
-        </div>
-      </div>
-      <q-separator />
-      <q-scroll-area
-        :thumb-style="thumbStyle"
-        class="class-list"
+      <div
+        class="fit"
+        v-show="!error"
       >
-        <q-list separator>
-          <q-item
-            v-for="classInfo in videoClass"
-            :key="classInfo.$.id"
-            clickable
-            v-ripple
-            @click="changeClass(classInfo.$.id)"
-            :active="currentClass === classInfo.$.id"
-          >
-            <q-item-section>{{ classInfo._ }}</q-item-section>
-          </q-item>
-        </q-list>
+        <q-scroll-area
+          :thumb-style="thumbStyle"
+          class="fit"
+        >
+          <q-list separator>
+            <q-item
+              v-for="classInfo in videoClass"
+              :key="classInfo.$.id"
+              clickable
+              v-ripple
+              @click="changeClass(classInfo.$.id)"
+              :active="currentClass === classInfo.$.id"
+            >
+              <q-item-section>{{ classInfo._ }}</q-item-section>
+            </q-item>
+          </q-list>
+        </q-scroll-area>
         <q-inner-loading :showing="loading">
           <q-spinner-gears
-            size="50px"
+            size="4rem"
             color="primary"
           />
         </q-inner-loading>
-      </q-scroll-area>
-    </q-drawer>
-
-    <q-drawer
-      v-model="right"
-      side="right"
-      bordered
-    >
-      <q-scroll-area class="fit">
-        <q-list>
-          <q-item
-            clickable
-            v-ripple
-          >
-            <q-item-section>
-              <span class="text-h6">网站设置</span>
-            </q-item-section>
-          </q-item>
-          <q-separator></q-separator>
-          <q-item
-            clickable
-            v-ripple
-          >
-            <q-item-section>
-              <q-toggle
-                v-model="https"
-                label="是否使用https"
-              />
-            </q-item-section>
-          </q-item>
-          <q-item
-            clickable
-            v-ripple
-          >
-            <q-item-section>
-              <span class="text-h6">视频源设置</span>
-            </q-item-section>
-          </q-item>
-          <q-separator></q-separator>
-          <q-item
-            clickable
-            v-ripple
-          >
-            <q-item-section>
-              <q-btn
-                color="primary"
-                label="导入视频源"
-                @click="gotoImport"
-              />
-            </q-item-section>
-          </q-item>
-          <q-item
-            clickable
-            v-ripple
-          >
-            <q-item-section>
-              <q-btn
-                color="red"
-                label="清空视频源"
-                @click="clearSource"
-              />
-            </q-item-section>
-          </q-item>
-        </q-list>
-      </q-scroll-area>
+      </div>
+      <div
+        v-show="error"
+        class="fit flex justify-center items-center"
+      >
+        <div class="text-center">
+          <q-icon
+            name="warning"
+            class="text-red"
+            style="font-size: 4rem;"
+          />
+          <div>加载分类失败</div>
+        </div>
+      </div>
     </q-drawer>
 
     <q-page-container>
@@ -211,6 +129,7 @@
 </template>
 
 <script>
+import titleBar from 'components/titlebar';
 import { mapState, mapMutations, mapGetters } from 'vuex';
 import util from 'util';
 import { parseString } from 'xml2js';
@@ -219,21 +138,22 @@ const Store = require('electron-store');
 
 const store = new Store();
 
-const ipc = require('electron').ipcRenderer;
-
 const parseStringSync = util.promisify(parseString);
 
 export default {
   data() {
     return {
       loading: true,
+      error: false,
       keyWord: '',
       tab: 1,
       videoClass: [],
       left: this.$q.platform.is.desktop,
-      right: false,
       httoOrHttps: false,
     };
+  },
+  components: {
+    titleBar,
   },
   beforeRouteEnter(from, to, next) {
     const storeSiteList = store.get('siteList');
@@ -246,6 +166,7 @@ export default {
   created() {
     const storeSiteList = this.$electronStore.get('siteList');
     this.setSiteList(storeSiteList);
+    const ipc = this.$q.electron.ipcRenderer;
     ipc.on('from-mini', (event, message) => {
       this.gotoPlayer(message);
     });
@@ -262,7 +183,7 @@ export default {
       this.$router.push('/');
     },
     keyWord() {
-      if (this.keyWord === null) {
+      if (this.keyWord === '') {
         this.$store.commit('setKeyWord', this.keyWord);
       }
     },
@@ -276,6 +197,7 @@ export default {
     ]),
     getClass() {
       this.loading = true;
+      this.error = false;
       this.$axios(this.currentSite.httpsApi, {
         params: {
           ac: 'list',
@@ -291,56 +213,27 @@ export default {
             },
           });
         })
-        .catch(console.error)
+        .catch((err) => {
+          this.error = true;
+          console.log(err);
+        })
         .finally(() => {
           this.loading = false;
         });
+    },
+    configClick() {
+      this.$router.push('/config');
     },
     changeClass(currentClass) {
       this.setCurrentClass(currentClass);
       this.$router.push('/');
     },
-    search() {
-      this.$store.commit('setKeyWord', this.keyWord);
-    },
     gotoPlayer(video) {
       this.setCurrentVideo(video);
       this.$router.push('/video');
     },
-    async gotoImport() {
-      this.$router.replace({
-        path: 'import',
-        query: {
-          canclable: true,
-        },
-      });
-    },
-    clearSource() {
-      this.$electronStore.clear();
-      this.$router.replace('/import');
-    },
-    minimize() {
-      if (process.env.MODE === 'electron') {
-        this.$q.electron.remote.BrowserWindow.getFocusedWindow().minimize();
-      }
-    },
-
-    maximize() {
-      if (process.env.MODE === 'electron') {
-        const win = this.$q.electron.remote.BrowserWindow.getFocusedWindow();
-
-        if (win.isMaximized()) {
-          win.unmaximize();
-        } else {
-          win.maximize();
-        }
-      }
-    },
-
-    closeApp() {
-      if (process.env.MODE === 'electron') {
-        this.$q.electron.remote.BrowserWindow.getFocusedWindow().close();
-      }
+    search() {
+      this.$store.commit('setKeyWord', this.keyWord);
     },
   },
   computed: {
@@ -349,14 +242,6 @@ export default {
       siteList: state => state.site.siteList,
       currentClass: state => state.site.currentClass,
     }),
-    https: {
-      get() {
-        return this.$store.state.app.https;
-      },
-      set(value) {
-        this.$store.commit('setHttps', value);
-      },
-    },
     thumbStyle() {
       return {
         right: '2px',
@@ -370,15 +255,4 @@ export default {
 };
 </script>
 
-<style lang="stylus">
-// .q-layout, .q-page {
-// min-height: inherit !important;
-// }
-.serch {
-  margin-top: 24px;
-}
-
-.class-list {
-  height: calc(100% - 100px);
-}
-</style>
+<style lang="stylus"></style>

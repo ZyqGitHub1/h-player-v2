@@ -191,10 +191,8 @@ export default {
       const slicedUrl = this.sliceUrl(str);
       const episodeInfo = slicedUrl.map(element => this.getUrlInfo(element));
       this.episodeInfo = episodeInfo;
-      console.log(episodeInfo);
     },
     normalizeUrl(url) {
-      console.log(url);
       if (isAbsoluteUrl(url)) {
         return normalizeUrl(url);
       }

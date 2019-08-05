@@ -4,68 +4,96 @@
     class="flex"
   >
     <scroll-warp>
+      <div
+        v-show="empty"
+        class="fit flex justify-center items-center"
+      >
+        <div class="text-center">
+          <q-icon
+            name="cloud_off"
+            style="font-size: 4rem;"
+          />
+          <div>暂无数据</div>
+        </div>
+      </div>
+      <div
+        v-show="error"
+        class="fit flex justify-center items-center"
+      >
+        <div class="text-center">
+          <q-icon
+            name="warning"
+            class="text-red"
+            style="font-size: 4rem;"
+          />
+          <div>加载数据失败</div>
+        </div>
+      </div>
       <q-scroll-area
+        v-show="!error && !empty"
         :thumb-style="thumbStyle"
         class="fit"
       >
-        <div class="q-pa-md row items-start justify-center q-gutter-md">
-          <q-card
-            class="my-card cursor-pointer"
-            v-for="video in videoList"
-            :key="video.id"
-            @click="gotoPlayer(video)"
-          >
-            <q-img
-              :src="video.pic"
-              spinner-color="red"
-              style="height: 200px;width: 290px"
+        <div>
+          <div class="q-pa-md row items-start justify-center q-gutter-md">
+            <q-card
+              class="my-card cursor-pointer"
+              v-for="video in videoList"
+              :key="video.id"
+              @click="gotoPlayer(video)"
             >
-              <div
-                class="absolute-bottom ellipsis text-subtitle1 text-center q-pa-xs"
-              >{{video.name}}</div>
-              <template v-slot:error>
-                <div class="absolute-full flex flex-center bg-negative text-white">
-                  <span>Cannot load image</span>
-                  <div
-                    class="absolute-bottom ellipsis text-subtitle1 text-center q-pa-xs"
-                  >{{video.name}}</div>
+              <q-img
+                :src="video.pic"
+                spinner-color="red"
+                style="height: 200px;width: 290px"
+              >
+                <div
+                  class="absolute-bottom ellipsis text-subtitle1 text-center q-pa-xs"
+                >{{video.name}}</div>
+                <template v-slot:error>
+                  <div class="absolute-full flex flex-center bg-negative text-white">
+                    <span>Cannot load image</span>
+                    <div
+                      class="absolute-bottom ellipsis text-subtitle1 text-center q-pa-xs"
+                    >{{video.name}}</div>
+                  </div>
+                </template>
+              </q-img>
+              <q-card-section>
+                <div class="text-h6 ellipsis title">
+                  {{video.name}}
+                  <q-tooltip>{{video.name}}</q-tooltip>
                 </div>
-              </template>
-            </q-img>
-            <q-card-section>
-              <div class="text-h6 ellipsis title">
-                {{video.name}}
-                <q-tooltip>{{video.name}}</q-tooltip>
-              </div>
-              <q-chip
-                square
-                color="teal"
-                text-color="white"
-                icon="bookmark"
-              >{{video.type}}</q-chip>
-              <q-chip
-                square
-                color="teal"
-                text-color="white"
-                icon="event"
-              >{{video.last}}</q-chip>
-            </q-card-section>
-          </q-card>
+                <q-chip
+                  square
+                  color="teal"
+                  text-color="white"
+                  icon="bookmark"
+                >{{video.type}}</q-chip>
+                <q-chip
+                  square
+                  color="teal"
+                  text-color="white"
+                  icon="event"
+                >{{video.last}}</q-chip>
+              </q-card-section>
+            </q-card>
+          </div>
+          <div class="q-pa-lg flex flex-center">
+            <q-pagination
+              v-model="pagination.page"
+              :max="pagination.total"
+              :input="true"
+            ></q-pagination>
+          </div>
         </div>
-        <div class="q-pa-lg flex flex-center">
-          <q-pagination
-            v-model="pagination.page"
-            :max="pagination.total"
-            :input="true"
-          ></q-pagination>
-        </div>
-        <q-inner-loading :showing="loading">
-          <q-spinner-gears
-            size="50px"
-            color="primary"
-          />
-        </q-inner-loading>
       </q-scroll-area>
+      <q-inner-loading :showing="loading">
+        <q-spinner-gears
+          size="4rem"
+          color="primary"
+        />
+      </q-inner-loading>
     </scroll-warp>
   </q-page>
 </template>
@@ -83,6 +111,7 @@ export default {
   data() {
     return {
       loading: true,
+      error: false,
       videoList: [],
       pagination: {
         page: 1,
@@ -98,7 +127,6 @@ export default {
   },
   mounted() {
     this.getVideoList(1);
-    console.log(this.layout);
   },
   watch: {
     // eslint-disable-next-line func-names
@@ -124,6 +152,7 @@ export default {
     ...mapMutations(['setCurrentVideo']),
     getVideoList(page) {
       this.loading = true;
+      this.error = false;
       this.$q.loadingBar.start();
       const params = {
         ac: 'videolist',
@@ -146,7 +175,10 @@ export default {
           this.videoList = data.rss.list.video;
           this.pagination.total = _toInteger(data.rss.list.$.pagecount);
         })
-        .catch(console.error)
+        .catch((error) => {
+          console.error(error);
+          this.error = true;
+        })
         .finally(() => {
           this.loading = false;
           this.$q.loadingBar.stop();
@@ -155,6 +187,10 @@ export default {
     gotoPlayer(video) {
       this.setCurrentVideo(video);
       this.$router.push('/video');
+    },
+    search() {
+      this.pagination.page = 1;
+      this.getVideoList(1);
     },
   },
   computed: {
@@ -172,6 +208,9 @@ export default {
         width: '5px',
         opacity: 0.75,
       };
+    },
+    empty() {
+      return !this.videoList || this.videoList.length === 0;
     },
   },
 };
