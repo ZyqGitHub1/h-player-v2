@@ -264,18 +264,24 @@ export default {
           const { pathname } = url;
           const extname = path.extname(pathname);
           if (extname === '.m3u8') {
-            this.$q.dialog({
-              title: '播放',
-              message: '检测到搜索参数是hls流链接，是否播放',
-              cancel: true,
-              persistent: true,
-            }).onOk(() => {
-              this.directVideo();
-            }).onCancel(() => {
-              this.$store.commit('setKeyWord', this.keyWord);
-            });
+            this.$q
+              .dialog({
+                title: '播放',
+                message: '检测到搜索参数是hls流链接，是否播放',
+                cancel: true,
+                persistent: true,
+              })
+              .onOk(() => {
+                this.directVideo();
+              })
+              .onCancel(() => {
+                this.$store.commit('setKeyWord', this.keyWord);
+              });
+          } else {
+            this.$store.commit('setKeyWord', this.keyWord);
           }
         } catch (error) {
+          this.$store.commit('setKeyWord', this.keyWord);
           console.error(error);
         }
       } else {
