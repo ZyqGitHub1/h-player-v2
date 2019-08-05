@@ -51,6 +51,9 @@ export default {
     } else {
       const hls = new Hls();
       this.hls = hls;
+      hls.on(Hls.Events.ERROR, (event, data) => {
+        this.$emit('hls-error', event, data);
+      });
       hls.loadSource(this.source);
       hls.attachMedia(this.video);
       this.$once('hook:beforeDestroy', () => {
