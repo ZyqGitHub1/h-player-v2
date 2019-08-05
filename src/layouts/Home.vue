@@ -68,7 +68,7 @@
       >
         <q-scroll-area
           :thumb-style="thumbStyle"
-          class="class-list"
+          class="fit"
         >
           <q-list separator>
             <q-item
@@ -103,70 +103,6 @@
           <div>加载分类失败</div>
         </div>
       </div>
-    </q-drawer>
-
-    <q-drawer
-      v-model="right"
-      side="right"
-      bordered
-    >
-      <q-scroll-area class="fit">
-        <q-list>
-          <q-item
-            clickable
-            v-ripple
-          >
-            <q-item-section>
-              <span class="text-h6">网站设置</span>
-            </q-item-section>
-          </q-item>
-          <q-separator></q-separator>
-          <q-item
-            clickable
-            v-ripple
-          >
-            <q-item-section>
-              <q-toggle
-                v-model="https"
-                label="是否使用https"
-              />
-            </q-item-section>
-          </q-item>
-          <q-item
-            clickable
-            v-ripple
-          >
-            <q-item-section>
-              <span class="text-h6">视频源设置</span>
-            </q-item-section>
-          </q-item>
-          <q-separator></q-separator>
-          <q-item
-            clickable
-            v-ripple
-          >
-            <q-item-section>
-              <q-btn
-                color="primary"
-                label="导入视频源"
-                @click="gotoImport"
-              />
-            </q-item-section>
-          </q-item>
-          <q-item
-            clickable
-            v-ripple
-          >
-            <q-item-section>
-              <q-btn
-                color="red"
-                label="清空视频源"
-                @click="clearSource"
-              />
-            </q-item-section>
-          </q-item>
-        </q-list>
-      </q-scroll-area>
     </q-drawer>
 
     <q-page-container>
@@ -213,7 +149,6 @@ export default {
       tab: 1,
       videoClass: [],
       left: this.$q.platform.is.desktop,
-      right: false,
       httoOrHttps: false,
     };
   },
@@ -287,7 +222,7 @@ export default {
         });
     },
     configClick() {
-      this.right = !this.right;
+      this.$router.push('/config');
     },
     changeClass(currentClass) {
       this.setCurrentClass(currentClass);
@@ -296,18 +231,6 @@ export default {
     gotoPlayer(video) {
       this.setCurrentVideo(video);
       this.$router.push('/video');
-    },
-    async gotoImport() {
-      this.$router.replace({
-        path: 'import',
-        query: {
-          canclable: true,
-        },
-      });
-    },
-    clearSource() {
-      this.$electronStore.clear();
-      this.$router.replace('/import');
     },
     search() {
       this.$store.commit('setKeyWord', this.keyWord);
@@ -319,14 +242,6 @@ export default {
       siteList: state => state.site.siteList,
       currentClass: state => state.site.currentClass,
     }),
-    https: {
-      get() {
-        return this.$store.state.app.https;
-      },
-      set(value) {
-        this.$store.commit('setHttps', value);
-      },
-    },
     thumbStyle() {
       return {
         right: '2px',
@@ -340,15 +255,4 @@ export default {
 };
 </script>
 
-<style lang="stylus">
-// .q-layout, .q-page {
-// min-height: inherit !important;
-// }
-.serch {
-  margin-top: 24px;
-}
-
-.class-list {
-  height: calc(100% - 100px);
-}
-</style>
+<style lang="stylus"></style>

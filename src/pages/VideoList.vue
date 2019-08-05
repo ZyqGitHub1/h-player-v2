@@ -5,6 +5,18 @@
   >
     <scroll-warp>
       <div
+        v-show="empty"
+        class="fit flex justify-center items-center"
+      >
+        <div class="text-center">
+          <q-icon
+            name="cloud_off"
+            style="font-size: 4rem;"
+          />
+          <div>暂无数据</div>
+        </div>
+      </div>
+      <div
         v-show="error"
         class="fit flex justify-center items-center"
       >
@@ -14,11 +26,11 @@
             class="text-red"
             style="font-size: 4rem;"
           />
-          <div>加载视频列表失败</div>
+          <div>加载数据失败</div>
         </div>
       </div>
       <q-scroll-area
-        v-show="!error"
+        v-show="!error && !empty"
         :thumb-style="thumbStyle"
         class="fit"
       >
@@ -196,6 +208,9 @@ export default {
         width: '5px',
         opacity: 0.75,
       };
+    },
+    empty() {
+      return !this.videoList || this.videoList.length === 0;
     },
   },
 };
