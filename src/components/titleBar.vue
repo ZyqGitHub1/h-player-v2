@@ -9,11 +9,12 @@
     <q-space />
 
     <q-btn
+      v-show="layout.includes('config')"
       dense
       flat
       round
       icon="settings"
-      @click="right = !right"
+      @click="configClick"
     />
 
     <q-btn
@@ -40,6 +41,14 @@
 <script>
 export default {
   name: 'titleBar',
+  props: {
+    layout: {
+      type: Array,
+      default() {
+        return ['config', 'minimize', 'maximize', 'close'];
+      },
+    },
+  },
   methods: {
     minimize() {
       if (process.env.MODE === 'electron') {
@@ -63,6 +72,9 @@ export default {
       if (process.env.MODE === 'electron') {
         this.$q.electron.remote.BrowserWindow.getFocusedWindow().close();
       }
+    },
+    configClick() {
+      this.$emit('config');
     },
   },
 };

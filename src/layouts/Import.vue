@@ -2,7 +2,7 @@
   <q-layout view="hHh Lpr fFf">
     <!-- (Optional) The Header -->
     <q-header elevated>
-      <title-bar></title-bar>
+      <title-bar :layout="['minimize', 'maximize', 'close']"></title-bar>
     </q-header>
     <!-- (Optional) The Footer -->
     <q-footer>

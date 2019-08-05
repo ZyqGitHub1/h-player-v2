@@ -7,7 +7,7 @@
       elevated
       class="bg-primary text-white"
     >
-      <title-bar></title-bar>
+      <title-bar @config="configClick"></title-bar>
 
       <q-toolbar>
         <q-btn
@@ -20,13 +20,28 @@
 
         <q-space></q-space>
 
-        <q-btn
+        <q-input
+          dark
           dense
-          flat
-          round
-          icon="search"
-          @click="left = !left"
-        />
+          standout
+          v-model="keyWord"
+          input-class="text-right"
+          class="q-ml-md"
+          @keyup.enter="search"
+        >
+          <template v-slot:append>
+            <q-icon
+              v-if="keyWord === ''"
+              name="search"
+            />
+            <q-icon
+              v-else
+              name="clear"
+              class="cursor-pointer"
+              @click="keyWord = ''"
+            />
+          </template>
+        </q-input>
       </q-toolbar>
 
       <q-tabs
@@ -194,6 +209,7 @@ export default {
     return {
       loading: true,
       error: false,
+      keyWord: '',
       tab: 1,
       videoClass: [],
       left: this.$q.platform.is.desktop,
@@ -231,6 +247,11 @@ export default {
       this.getClass();
       this.$router.push('/');
     },
+    keyWord() {
+      if (this.keyWord === '') {
+        this.$store.commit('setKeyWord', this.keyWord);
+      }
+    },
   },
   methods: {
     ...mapMutations([
@@ -265,6 +286,9 @@ export default {
           this.loading = false;
         });
     },
+    configClick() {
+      this.right = !this.right;
+    },
     changeClass(currentClass) {
       this.setCurrentClass(currentClass);
       this.$router.push('/');
@@ -284,6 +308,9 @@ export default {
     clearSource() {
       this.$electronStore.clear();
       this.$router.replace('/import');
+    },
+    search() {
+      this.$store.commit('setKeyWord', this.keyWord);
     },
   },
   computed: {

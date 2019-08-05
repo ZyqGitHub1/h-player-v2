@@ -22,70 +22,58 @@
         :thumb-style="thumbStyle"
         class="fit"
       >
-        <div class="row justify-center">
-          <div class="col-10">
-            <q-input
-              clearable
-              v-model="keyWord"
-              label="请输入关键字"
-              @keyup.enter="search"
+        <div>
+          <div class="q-pa-md row items-start justify-center q-gutter-md">
+            <q-card
+              class="my-card cursor-pointer"
+              v-for="video in videoList"
+              :key="video.id"
+              @click="gotoPlayer(video)"
             >
-              <template v-slot:prepend>
-                <q-icon name="search" />
-              </template>
-            </q-input>
-          </div>
-        </div>
-        <div class="q-pa-md row items-start justify-center q-gutter-md">
-          <q-card
-            class="my-card cursor-pointer"
-            v-for="video in videoList"
-            :key="video.id"
-            @click="gotoPlayer(video)"
-          >
-            <q-img
-              :src="video.pic"
-              spinner-color="red"
-              style="height: 200px;width: 290px"
-            >
-              <div
-                class="absolute-bottom ellipsis text-subtitle1 text-center q-pa-xs"
-              >{{video.name}}</div>
-              <template v-slot:error>
-                <div class="absolute-full flex flex-center bg-negative text-white">
-                  <span>Cannot load image</span>
-                  <div
-                    class="absolute-bottom ellipsis text-subtitle1 text-center q-pa-xs"
-                  >{{video.name}}</div>
+              <q-img
+                :src="video.pic"
+                spinner-color="red"
+                style="height: 200px;width: 290px"
+              >
+                <div
+                  class="absolute-bottom ellipsis text-subtitle1 text-center q-pa-xs"
+                >{{video.name}}</div>
+                <template v-slot:error>
+                  <div class="absolute-full flex flex-center bg-negative text-white">
+                    <span>Cannot load image</span>
+                    <div
+                      class="absolute-bottom ellipsis text-subtitle1 text-center q-pa-xs"
+                    >{{video.name}}</div>
+                  </div>
+                </template>
+              </q-img>
+              <q-card-section>
+                <div class="text-h6 ellipsis title">
+                  {{video.name}}
+                  <q-tooltip>{{video.name}}</q-tooltip>
                 </div>
-              </template>
-            </q-img>
-            <q-card-section>
-              <div class="text-h6 ellipsis title">
-                {{video.name}}
-                <q-tooltip>{{video.name}}</q-tooltip>
-              </div>
-              <q-chip
-                square
-                color="teal"
-                text-color="white"
-                icon="bookmark"
-              >{{video.type}}</q-chip>
-              <q-chip
-                square
-                color="teal"
-                text-color="white"
-                icon="event"
-              >{{video.last}}</q-chip>
-            </q-card-section>
-          </q-card>
-        </div>
-        <div class="q-pa-lg flex flex-center">
-          <q-pagination
-            v-model="pagination.page"
-            :max="pagination.total"
-            :input="true"
-          ></q-pagination>
+                <q-chip
+                  square
+                  color="teal"
+                  text-color="white"
+                  icon="bookmark"
+                >{{video.type}}</q-chip>
+                <q-chip
+                  square
+                  color="teal"
+                  text-color="white"
+                  icon="event"
+                >{{video.last}}</q-chip>
+              </q-card-section>
+            </q-card>
+          </div>
+          <div class="q-pa-lg flex flex-center">
+            <q-pagination
+              v-model="pagination.page"
+              :max="pagination.total"
+              :input="true"
+            ></q-pagination>
+          </div>
         </div>
       </q-scroll-area>
       <q-inner-loading :showing="loading">
@@ -112,7 +100,6 @@ export default {
     return {
       loading: true,
       error: false,
-      keyWord: '',
       videoList: [],
       pagination: {
         page: 1,
@@ -127,7 +114,6 @@ export default {
     scrollWarp,
   },
   mounted() {
-    this.keyWord = '';
     this.getVideoList(1);
   },
   watch: {
@@ -137,15 +123,15 @@ export default {
     },
     currentSite() {
       this.pagination.page = 1;
-      this.keyWord = '';
       this.getVideoList(1);
     },
     currentClass() {
       this.pagination.page = 1;
       this.getVideoList(1);
     },
-    keyWord(value) {
-      if (!value) {
+    keyWord(newKeyWord, oldKeyWord) {
+      if (newKeyWord !== oldKeyWord) {
+        this.pagination.page = 1;
         this.getVideoList(1);
       }
     },
@@ -200,6 +186,7 @@ export default {
     ...mapState({
       currentClass: state => state.site.currentClass,
       https: state => state.app.https,
+      keyWord: state => state.site.keyWord,
     }),
     thumbStyle() {
       return {
