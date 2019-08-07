@@ -1,3 +1,7 @@
+const Store = require('electron-store');
+
+const store = new Store();
+
 export default {
   state: {
     siteList: [],
@@ -21,5 +25,16 @@ export default {
   },
   getters: {
     currentSite: state => state.siteList.find(item => item.id === state.currentSiteId),
+  },
+  actions: {
+    loadSiteList(context) {
+      const storeSiteList = store.get('siteList');
+      if (!Array.isArray(storeSiteList)) {
+        context.commit('setSiteList', []);
+      }
+      context.commit('setSiteList', storeSiteList);
+
+      return storeSiteList;
+    },
   },
 };

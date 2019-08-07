@@ -3339,6 +3339,14 @@ electron-to-chromium@^1.3.191:
   resolved "https://registry.npm.taobao.org/electron-to-chromium/download/electron-to-chromium-1.3.194.tgz?cache=0&sync_timestamp=1563422564539&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Felectron-to-chromium%2Fdownload%2Felectron-to-chromium-1.3.194.tgz#a96452a96d4539131957aade9f634a45721f2819"
   integrity sha1-qWRSqW1FORMZV6ren2NKRXIfKBk=
 
+electron-util@^0.12.1:
+  version "0.12.1"
+  resolved "https://registry.npm.taobao.org/electron-util/download/electron-util-0.12.1.tgz#4a10492d416509a1f588c92d2e50e17798fb4c56"
+  integrity sha1-ShBJLUFlCaH1iMktLlDhd5j7TFY=
+  dependencies:
+    electron-is-dev "^1.1.0"
+    new-github-issue-url "^0.2.1"
+
 electron@^5.0.0:
   version "5.0.7"
   resolved "https://registry.npm.taobao.org/electron/download/electron-5.0.7.tgz#a48fcbd13d30f16f7d7887908b68e52156e90259"
@@ -6110,6 +6118,11 @@ neo-async@^2.5.0:
   resolved "https://registry.npm.taobao.org/neo-async/download/neo-async-2.6.1.tgz?cache=0&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fneo-async%2Fdownload%2Fneo-async-2.6.1.tgz#ac27ada66167fa8849a6addd837f6b189ad2081c"
   integrity sha1-rCetpmFn+ohJpq3dg39rGJrSCBw=
 
+new-github-issue-url@^0.2.1:
+  version "0.2.1"
+  resolved "https://registry.npm.taobao.org/new-github-issue-url/download/new-github-issue-url-0.2.1.tgz#e17be1f665a92de465926603e44b9f8685630c1d"
+  integrity sha1-4Xvh9mWpLeRlkmYD5EufhoVjDB0=
+
 nice-try@^1.0.4:
   version "1.0.5"
   resolved "https://registry.npm.taobao.org/nice-try/download/nice-try-1.0.5.tgz#a3378a7696ce7d223e88fc9b764bd7ef1089e366"
@@ -6849,7 +6862,7 @@ plist@^3.0.0, plist@^3.0.1:
     xmlbuilder "^9.0.7"
     xmldom "0.1.x"
 
-plyr@^3.5.2, plyr@^3.5.6:
+plyr@^3.5.6:
   version "3.5.6"
   resolved "https://registry.npm.taobao.org/plyr/download/plyr-3.5.6.tgz#1679d098af3fd0541bba62bc03f662f7c9ae6f2b"
   integrity sha1-FnnQmK8/0FQbumK8A/Zi98mubys=
@@ -7980,6 +7993,11 @@ semver@6.2.0, semver@^6.0.0, semver@^6.1.1:
   version "6.2.0"
   resolved "https://registry.npm.taobao.org/semver/download/semver-6.2.0.tgz#4d813d9590aaf8a9192693d6c85b9344de5901db"
   integrity sha1-TYE9lZCq+KkZJpPWyFuTRN5ZAds=
+
+semver@^6.3.0:
+  version "6.3.0"
+  resolved "https://registry.npm.taobao.org/semver/download/semver-6.3.0.tgz#ee0a64c8af5e8ceea67687b133761e1becbd1d3d"
+  integrity sha1-7gpkyK9ejO6mdoexM3YeG+y9HT0=
 
 send@0.17.1:
   version "0.17.1"
@@ -9169,13 +9187,6 @@ vue-navigation@^1.1.4:
   version "1.1.4"
   resolved "https://registry.npm.taobao.org/vue-navigation/download/vue-navigation-1.1.4.tgz#be990190624647daa34b8cd525fad4fb6d472542"
   integrity sha1-vpkBkGJGR9qjS4zVJfrU+21HJUI=
-
-vue-plyr@^5.1.3:
-  version "5.1.3"
-  resolved "https://registry.npm.taobao.org/vue-plyr/download/vue-plyr-5.1.3.tgz#38da58f71b952c3dbfa8c7fccc5b2471a118c654"
-  integrity sha1-ONpY9xuVLD2/qMf8zFskcaEYxlQ=
-  dependencies:
-    plyr "^3.5.2"
 
 vue-router@3.0.7:
   version "3.0.7"
