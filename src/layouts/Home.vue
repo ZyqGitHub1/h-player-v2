@@ -121,7 +121,7 @@
 </template>
 
 <script>
-import titleBar from 'components/titlebar';
+import titleBar from 'components/titleBar';
 import footerContent from 'components/footerContent';
 import { mapState, mapMutations, mapGetters } from 'vuex';
 import util from 'util';

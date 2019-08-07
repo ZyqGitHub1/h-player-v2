@@ -32,7 +32,7 @@
 
 <script>
 import footerContent from 'components/footerContent';
-import titleBar from 'components/titlebar';
+import titleBar from 'components/titleBar';
 import { mapMutations, mapState } from 'vuex';
 import fs from 'fs-extra';
 

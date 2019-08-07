@@ -340,7 +340,7 @@
 import footerContent from 'components/footerContent';
 import scrollWarp from 'components/scrollWarp';
 import clonedeep from 'lodash/cloneDeep';
-import titleBar from 'components/titlebar';
+import titleBar from 'components/titleBar';
 import { mapMutations, mapState } from 'vuex';
 import { uid } from 'quasar';
 import fs from 'fs-extra';
