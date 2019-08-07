@@ -83,9 +83,11 @@
                       :props="props"
                     >
                       {{ props.row.name }}
-                      <q-popup-edit v-model="props.row.name">
+                      <q-popup-edit
+                        v-model="props.row.name"
+                        buttons
+                      >
                         <q-input
-                          type="textarea"
                           v-model="props.row.name"
                           dense
                           autofocus
@@ -98,9 +100,11 @@
                       :props="props"
                     >
                       {{ props.row.uri }}
-                      <q-popup-edit v-model="props.row.uri">
+                      <q-popup-edit
+                        v-model="props.row.uri"
+                        buttons
+                      >
                         <q-input
-                          type="textarea"
                           v-model="props.row.uri"
                           dense
                           autofocus
@@ -113,9 +117,11 @@
                       :props="props"
                     >
                       <div class="text-pre-wrap">{{ props.row.httpApi }}</div>
-                      <q-popup-edit v-model="props.row.httpApi">
+                      <q-popup-edit
+                        v-model="props.row.httpApi"
+                        buttons
+                      >
                         <q-input
-                          type="textarea"
                           v-model="props.row.httpApi"
                           dense
                           autofocus
@@ -127,9 +133,11 @@
                       :props="props"
                     >
                       <div class="text-pre-wrap">{{ props.row.httpsApi }}</div>
-                      <q-popup-edit v-model="props.row.httpsApi">
+                      <q-popup-edit
+                        v-model="props.row.httpsApi"
+                        buttons
+                      >
                         <q-input
-                          type="textarea"
                           v-model="props.row.httpsApi"
                           dense
                           autofocus
@@ -141,9 +149,11 @@
                       :props="props"
                     >
                       <div class="text-pre-wrap">{{ props.row.type }}</div>
-                      <q-popup-edit v-model="props.row.type">
+                      <q-popup-edit
+                        v-model="props.row.type"
+                        buttons
+                      >
                         <q-input
-                          type="textarea"
                           v-model="props.row.type"
                           dense
                           autofocus
@@ -491,11 +501,14 @@ export default {
     },
     checkUpdate() {
       this.updateing = true;
-      this.$store.dispatch('getLatestVersion').catch((error) => {
-        console.error(error);
-      }).finally(() => {
-        this.updateing = false;
-      });
+      this.$store
+        .dispatch('getLatestVersion')
+        .catch((error) => {
+          console.error(error);
+        })
+        .finally(() => {
+          this.updateing = false;
+        });
     },
     createIssue() {
       openNewGitHubIssue({
