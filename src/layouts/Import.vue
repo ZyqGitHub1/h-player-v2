@@ -6,15 +6,7 @@
     </q-header>
     <!-- (Optional) The Footer -->
     <q-footer>
-      <q-toolbar>
-        <q-toolbar-title>
-          <q-avatar
-            square
-            size="24px"
-            color="orange"
-          >H</q-avatar>
-        </q-toolbar-title>
-      </q-toolbar>
+      <footer-content></footer-content>
     </q-footer>
     <q-page-container>
       <q-page class="flex">
@@ -39,7 +31,8 @@
 </template>
 
 <script>
-import titleBar from 'components/titlebar';
+import footerContent from 'components/footerContent';
+import titleBar from 'components/titleBar';
 import { mapMutations, mapState } from 'vuex';
 import fs from 'fs-extra';
 
@@ -47,6 +40,7 @@ export default {
   name: 'Import',
   components: {
     titleBar,
+    footerContent,
   },
   computed: {
     ...mapState({

@@ -115,21 +115,14 @@
       elevated
       class="bg-grey-8 text-white"
     >
-      <q-toolbar>
-        <q-toolbar-title>
-          <q-avatar
-            square
-            size="24px"
-            color="orange"
-          >H</q-avatar>
-        </q-toolbar-title>
-      </q-toolbar>
+    <footer-content></footer-content>
     </q-footer>
   </q-layout>
 </template>
 
 <script>
-import titleBar from 'components/titlebar';
+import titleBar from 'components/titleBar';
+import footerContent from 'components/footerContent';
 import { mapState, mapMutations, mapGetters } from 'vuex';
 import util from 'util';
 import isAbsoluteUrl from 'is-absolute-url';
@@ -138,10 +131,6 @@ import { parseString } from 'xml2js';
 import { URL } from 'url';
 import path from 'path';
 import { stringify } from 'query-string';
-
-const Store = require('electron-store');
-
-const store = new Store();
 
 const parseStringSync = util.promisify(parseString);
 
@@ -159,14 +148,7 @@ export default {
   },
   components: {
     titleBar,
-  },
-  beforeRouteEnter(from, to, next) {
-    const storeSiteList = store.get('siteList');
-    if (!storeSiteList || storeSiteList.length === 0) {
-      next('/import');
-    }
-
-    next();
+    footerContent,
   },
   created() {
     const storeSiteList = this.$electronStore.get('siteList');
