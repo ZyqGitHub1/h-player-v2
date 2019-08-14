@@ -417,7 +417,6 @@ export default {
     data: {
       handler() {
         this.setSiteList(clonedeep(this.data));
-        this.$electronStore.set('siteList', this.siteList);
       },
       deep: true,
     },
@@ -464,7 +463,6 @@ export default {
       });
       if (dialogResult) {
         const importedFile = await fs.readJSON(dialogResult[0]);
-        this.$electronStore.set('siteList', importedFile);
         this.setSiteList(importedFile);
         this.data = clonedeep(this.siteList);
       }

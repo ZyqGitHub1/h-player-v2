@@ -57,7 +57,6 @@ export default {
       });
       if (dialogResult) {
         const importedFile = await fs.readJSON(dialogResult[0]);
-        this.$electronStore.set('siteList', importedFile);
         this.setSiteList(importedFile);
         this.$router.push('/');
       }

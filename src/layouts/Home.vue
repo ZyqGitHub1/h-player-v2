@@ -115,7 +115,7 @@
       elevated
       class="bg-grey-8 text-white"
     >
-    <footer-content></footer-content>
+      <footer-content></footer-content>
     </q-footer>
   </q-layout>
 </template>
@@ -140,7 +140,7 @@ export default {
       loading: true,
       error: false,
       keyWord: '',
-      tab: 1,
+      tab: '',
       videoClass: [],
       left: this.$q.platform.is.desktop,
       httoOrHttps: false,
@@ -151,16 +151,14 @@ export default {
     footerContent,
   },
   created() {
-    const storeSiteList = this.$electronStore.get('siteList');
-    this.setSiteList(storeSiteList);
-    const ipc = this.$q.electron.ipcRenderer;
-    ipc.on('from-mini', (event, message) => {
-      this.gotoPlayer(message);
-    });
-    this.setCurrentClass('all');
-    this.setCurrentSiteId(this.tab);
-    this.getClass();
-    this.$router.push('/');
+    if (!this.siteList || this.siteList.length === 0) {
+      this.$router.push('/import');
+    } else {
+      this.setCurrentClass('all');
+      this.tab = this.siteList[0].id;
+      this.setCurrentSiteId(this.tab);
+      this.getClass();
+    }
   },
   watch: {
     tab() {
