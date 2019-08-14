@@ -5,7 +5,7 @@
   >
     <scroll-warp>
       <div
-        v-show="empty"
+        v-show="empty && !error"
         class="fit flex justify-center items-center"
       >
         <div class="text-center">
