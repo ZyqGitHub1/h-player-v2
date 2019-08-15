@@ -39,50 +39,51 @@
             <q-card
               class="my-card cursor-pointer"
               v-for="video in videoList"
-              :key="video.id"
+              :key="video.id[0]"
               @click="gotoPlayer(video)"
             >
               <q-img
-                :src="video.pic"
+                :src="video.pic[0]"
                 spinner-color="red"
                 style="height: 200px;width: 290px"
               >
                 <div
                   class="absolute-bottom ellipsis text-subtitle1 text-center q-pa-xs"
-                >{{video.name}}</div>
+                >{{video.name[0]}}</div>
                 <template v-slot:error>
                   <div class="absolute-full flex flex-center bg-negative text-white">
                     <span>Cannot load image</span>
                     <div
                       class="absolute-bottom ellipsis text-subtitle1 text-center q-pa-xs"
-                    >{{video.name}}</div>
+                    >{{video.name[0]}}</div>
                   </div>
                 </template>
               </q-img>
               <q-card-section>
                 <div class="text-h6 ellipsis title">
-                  {{video.name}}
-                  <q-tooltip>{{video.name}}</q-tooltip>
+                  {{video.name[0]}}
+                  <q-tooltip>{{video.name[0]}}</q-tooltip>
                 </div>
                 <q-chip
                   square
                   color="teal"
                   text-color="white"
                   icon="bookmark"
-                >{{video.type}}</q-chip>
+                >{{video.type[0]}}</q-chip>
                 <q-chip
                   square
                   color="teal"
                   text-color="white"
                   icon="event"
-                >{{video.last}}</q-chip>
+                >{{video.last[0]}}</q-chip>
               </q-card-section>
             </q-card>
           </div>
           <div class="q-pa-lg flex flex-center">
             <q-pagination
-              v-model="pagination.page"
-              :max="pagination.total"
+              :value="page"
+              @input="changePage"
+              :max="total"
               :input="true"
             ></q-pagination>
           </div>
@@ -100,97 +101,45 @@
 
 <script>
 import scrollWarp from 'components/scrollWarp';
-import util from 'util';
-import { parseString } from 'xml2js';
-import _toInteger from 'lodash/toInteger';
 import { mapGetters, mapMutations, mapState } from 'vuex';
 
-const parseStringSync = util.promisify(parseString);
 export default {
   name: 'VideoList',
-  data() {
-    return {
-      loading: true,
-      error: false,
-      videoList: [],
-      pagination: {
-        page: 1,
-        total: 0,
+  props: {
+    page: {
+      type: Number,
+      default: 1,
+    },
+    total: {
+      type: Number,
+      default: 0,
+    },
+    loading: {
+      type: Boolean,
+      default: true,
+    },
+    error: {
+      ype: Boolean,
+      default: false,
+    },
+    videoList: {
+      type: Array,
+      default() {
+        return [];
       },
-      scrollStyle: {
-        height: 0,
-      },
-    };
+    },
   },
   components: {
     scrollWarp,
   },
-  mounted() {
-    this.getVideoList(1);
-  },
-  watch: {
-    // eslint-disable-next-line func-names
-    'pagination.page': function (value) {
-      this.getVideoList(value);
-    },
-    currentSite() {
-      this.pagination.page = 1;
-      this.getVideoList(1);
-    },
-    currentClass() {
-      this.pagination.page = 1;
-      this.getVideoList(1);
-    },
-    keyWord(newKeyWord, oldKeyWord) {
-      if (newKeyWord !== oldKeyWord) {
-        this.pagination.page = 1;
-        this.getVideoList(1);
-      }
-    },
-  },
   methods: {
     ...mapMutations(['setCurrentVideo']),
-    getVideoList(page) {
-      this.loading = true;
-      this.error = false;
-      this.$q.loadingBar.start();
-      const params = {
-        ac: 'videolist',
-        pg: page,
-      };
-      if (this.currentClass !== 'all') {
-        params.t = this.currentClass;
-      }
-      if (this.keyWord) {
-        params.wd = this.keyWord;
-      }
-      const uri = this.https
-        ? this.currentSite.httpsApi
-        : this.currentSite.httpApi;
-      this.$axios(uri, {
-        params,
-      })
-        .then(res => parseStringSync(res.data, { explicitArray: false }))
-        .then((data) => {
-          this.videoList = data.rss.list.video;
-          this.pagination.total = _toInteger(data.rss.list.$.pagecount);
-        })
-        .catch((error) => {
-          console.error(error);
-          this.error = true;
-        })
-        .finally(() => {
-          this.loading = false;
-          this.$q.loadingBar.stop();
-        });
+    changePage(value) {
+      this.$emit('page-change', value);
     },
     gotoPlayer(video) {
       this.setCurrentVideo(video);
       this.$router.push('/video');
-    },
-    search() {
-      this.pagination.page = 1;
-      this.getVideoList(1);
     },
   },
   computed: {

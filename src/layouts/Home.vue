@@ -72,7 +72,7 @@
         >
           <q-list separator>
             <q-item
-              v-for="classInfo in videoClass"
+              v-for="classInfo in processdVideoClass"
               :key="classInfo.$.id"
               clickable
               v-ripple
@@ -107,7 +107,13 @@
 
     <q-page-container>
       <navigation>
-        <router-view />
+        <router-view
+          :videoList="videoList"
+          :loading="loading"
+          :total="total"
+          :page="page"
+          @page-change="pageChange"
+        />
       </navigation>
     </q-page-container>
 
@@ -124,15 +130,14 @@
 import titleBar from 'components/titleBar';
 import footerContent from 'components/footerContent';
 import { mapState, mapMutations, mapGetters } from 'vuex';
-import util from 'util';
 import isAbsoluteUrl from 'is-absolute-url';
-import { parseString } from 'xml2js';
-
 import { URL } from 'url';
 import path from 'path';
 import { stringify } from 'query-string';
-
-const parseStringSync = util.promisify(parseString);
+import _toInteger from 'lodash/toInteger';
+import _get from 'lodash/get';
+import { getList, getDetail } from '../api/maccms-v8.js';
+import { parseXML } from '../utils/parse-xml.js';
 
 export default {
   data() {
@@ -144,6 +149,10 @@ export default {
       videoClass: [],
       left: this.$q.platform.is.desktop,
       httoOrHttps: false,
+      ids: [],
+      page: 1,
+      total: 0,
+      videoList: [],
     };
   },
   components: {
@@ -157,20 +166,22 @@ export default {
       this.setCurrentClass('all');
       this.tab = this.siteList[0].id;
       this.setCurrentSiteId(this.tab);
-      this.getClass();
     }
   },
   watch: {
     tab() {
+      console.log('tab');
       this.setCurrentClass('all');
       this.setCurrentSiteId(this.tab);
-      this.getClass();
+      this.page = 1;
+      this.fetchInfo();
       this.$router.push('/');
     },
-    keyWord() {
-      if (this.keyWord === '') {
-        this.$store.commit('setKeyWord', this.keyWord);
-      }
+    globalKw() {
+      console.log('globalKw');
+      this.setCurrentClass('all');
+      this.page = 1;
+      this.fetchInfo();
     },
   },
   methods: {
@@ -180,37 +191,66 @@ export default {
       'setCurrentVideo',
       'setSiteList',
     ]),
-    getClass() {
+
+    async getVideoList() {
       this.loading = true;
       this.error = false;
-      this.$axios(this.currentSite.httpsApi, {
-        params: {
-          ac: 'list',
-        },
-      })
-        .then(res => parseStringSync(res.data, { explicitArray: false }))
-        .then((data) => {
-          this.videoClass = data.rss.class.ty;
-          this.videoClass.unshift({
-            _: '全部',
-            $: {
-              id: 'all',
-            },
-          });
-        })
-        .catch((err) => {
-          this.error = true;
-          console.log(err);
-        })
-        .finally(() => {
-          this.loading = false;
-        });
+      const uri = this.currentUri;
+      // get video list and class
+      const params = {
+        pg: this.page,
+      };
+      if (this.currentClass !== 'all') {
+        params.t = this.currentClass;
+      }
+      if (this.keyWord) {
+        params.wd = this.keyWord;
+      }
+      const listResponse = await getList(uri, params);
+      const parsedList = await parseXML(listResponse.data);
+      this.videoClass = parsedList.rss.class[0].ty;
+      this.total = _toInteger(parsedList.rss.list[0].$.pagecount);
+      // get video detail
+      const videoInfo = _get(parsedList, 'rss.list[0].video', []);
+      this.ids = videoInfo.map(item => item.id[0]);
+    },
+
+    async getVideoDetail() {
+      this.loading = true;
+      this.error = false;
+      const detailResponse = await getDetail(this.currentUri, {
+        ids: this.ids,
+      });
+      const parsedDetail = await parseXML(detailResponse.data);
+      this.videoList = _get(parsedDetail, 'rss.list[0].video', []);
+    },
+
+    async fetchInfo() {
+      console.log('fetchInfo');
+      try {
+        this.loading = true;
+        this.error = false;
+        this.$q.loadingBar.start();
+        await this.getVideoList();
+        if (this.ids.length !== 0) {
+          await this.getVideoDetail();
+        } else {
+          this.videoList = [];
+        }
+      } catch (error) {
+        this.error = true;
+        console.error(error);
+      } finally {
+        this.loading = false;
+        this.$q.loadingBar.stop();
+      }
     },
     configClick() {
       this.$router.push('/config');
     },
     changeClass(currentClass) {
       this.setCurrentClass(currentClass);
+      this.fetchInfo();
       this.$router.push('/');
     },
     gotoPlayer(video) {
@@ -268,12 +308,20 @@ export default {
         this.$store.commit('setKeyWord', this.keyWord);
       }
     },
+    pageChange(value) {
+      console.log('pageChange');
+      this.page = value;
+      if (this.page !== 1) {
+        this.fetchInfo();
+      }
+    },
   },
   computed: {
     ...mapGetters(['currentSite']),
     ...mapState({
       siteList: state => state.site.siteList,
       currentClass: state => state.site.currentClass,
+      globalKw: state => state.site.keyWord,
     }),
     thumbStyle() {
       return {
@@ -283,6 +331,19 @@ export default {
         width: '5px',
         opacity: 0.75,
       };
+    },
+    processdVideoClass() {
+      return [
+        {
+          _: '全部',
+          $: {
+            id: 'all',
+          },
+        },
+      ].concat(this.videoClass);
+    },
+    currentUri() {
+      return this.https ? this.currentSite.httpsApi : this.currentSite.httpApi;
     },
   },
 };

@@ -25,10 +25,7 @@
 <script>
 import HlsPlayer from 'components/HlsPlayer';
 import normalizeUrl from 'normalize-url';
-
-const ipc = require('electron').ipcRenderer;
-
-const { getCurrentWindow } = require('electron').remote;
+import _get from 'lodash/get';
 
 export default {
   name: 'MiniVideo',
@@ -56,8 +53,9 @@ export default {
   },
   created() {
     const videoInfo = JSON.parse(this.$route.query.video);
-    this.videoUrl = videoInfo.dl.dd._;
-    document.querySelector('title').text = videoInfo.name;
+    const episodeInfo = JSON.parse(this.$route.query.episode);
+    this.videoUrl = _get(episodeInfo, 'url', '');
+    document.querySelector('title').text = `${videoInfo.name[0]}-${episodeInfo.episode}`;
   },
   methods: {
     normalizeUrl(url) {
@@ -65,6 +63,8 @@ export default {
       return normalizeUrl(pureUrl);
     },
     maximize() {
+      const ipc = this.$q.electron.ipcRenderer;
+      const { getCurrentWindow } = this.$q.electron.remote;
       const { player } = this.$refs.player;
       const { playing } = player;
       if (playing) {
@@ -73,7 +73,7 @@ export default {
       player.pause();
       this.$q.dialog({
         title: '还原',
-        message: '此操作将在主窗口中打开本视频并关闭当前窗口，是否继续',
+        message: '此操作将在主窗口中打开视频并关闭当前窗口，是否继续',
         cancel: true,
         persistent: true,
       }).onOk(() => {
