@@ -1,0 +1,74 @@
+matrix:
+  include:
+    - os: osx
+      osx_image: xcode10.2
+      language: node_js
+      node_js: '10'
+      env:
+        - ELECTRON_CACHE=$HOME/.cache/electron
+        - ELECTRON_BUILDER_CACHE=$HOME/.cache/electron-builder
+
+    - os: linux
+      services: docker
+      language: generic
+
+cache:
+  directories:
+    - node_modules
+    - $HOME/.cache/electron
+    - $HOME/.cache/electron-builder
+
+before_install:
+  - |
+    if [ "$TRAVIS_OS_NAME" == "linux" ]; then
+      # download aliyun OSS Linux client
+      wget -nc http://gosspublic.alicdn.com/ossutil/1.6.5/ossutil64
+      chmod 755 ossutil64
+      # config aliyun OSS Linux client https://help.aliyun.com/document_detail/50455.html
+      ./ossutil64 config -e "${OSS_ENDPOINT}" -i "${OSS_AKI}" -k "${OSS_AKS}"
+    else
+      # download aliyun OSS Linux client
+      wget -nc http://gosspublic.alicdn.com/ossutil/1.6.5/ossutilmac64
+      chmod 755 ossutilmac64
+      # config aliyun OSS Linux client https://help.aliyun.com/document_detail/50455.html
+      ./ossutilmac64 config -e "${OSS_ENDPOINT}" -i "${OSS_AKI}" -k "${OSS_AKS}"
+    fi
+
+script:
+  - |
+    if [ "$TRAVIS_OS_NAME" == "linux" ]; then
+      docker run --rm \
+        --env-file <(env | grep -vE '\r|\n' | grep -iE 'DEBUG|NODE_|ELECTRON_|YARN_|NPM_|CI|CIRCLE|TRAVIS_TAG|TRAVIS|TRAVIS_REPO_|TRAVIS_BUILD_|TRAVIS_BRANCH|TRAVIS_PULL_REQUEST_|APPVEYOR_|CSC_|GH_|GITHUB_|BT_|AWS_|STRIP|BUILD_') \
+        --env ELECTRON_CACHE="/root/.cache/electron" \
+        --env ELECTRON_BUILDER_CACHE="/root/.cache/electron-builder" \
+        -v ${PWD}:/project \
+        -v ~/.cache/electron:/root/.cache/electron \
+        -v ~/.cache/electron-builder:/root/.cache/electron-builder \
+        electronuserland/builder:wine \
+        /bin/bash -c "yarn --link-duplicates --pure-lockfile && yarn electron:build --bundler builder --target linux"
+      linux_file=`ls dist/electron/Packaged/ | grep '.AppImage$'`
+      ./ossutil64 cp "dist/electron/Packaged/${linux_file}" "${BUCKET}/${linux_file}" -f
+
+      docker run --rm \
+        --env-file <(env | grep -vE '\r|\n' | grep -iE 'DEBUG|NODE_|ELECTRON_|YARN_|NPM_|CI|CIRCLE|TRAVIS_TAG|TRAVIS|TRAVIS_REPO_|TRAVIS_BUILD_|TRAVIS_BRANCH|TRAVIS_PULL_REQUEST_|APPVEYOR_|CSC_|GH_|GITHUB_|BT_|AWS_|STRIP|BUILD_') \
+        --env ELECTRON_CACHE="/root/.cache/electron" \
+        --env ELECTRON_BUILDER_CACHE="/root/.cache/electron-builder" \
+        -v ${PWD}:/project \
+        -v ~/.cache/electron:/root/.cache/electron \
+        -v ~/.cache/electron-builder:/root/.cache/electron-builder \
+        electronuserland/builder:wine \
+        /bin/bash -c "yarn --link-duplicates --pure-lockfile && yarn electron:build --bundler builder --target win"
+        win_file=`ls dist/electron/Packaged/ | grep '.zip$'`
+      ./ossutil64 cp "dist/electron/Packaged/${win_file}" "${BUCKET}/${win_file}" -f
+    else
+      yarn electron:build
+      osx_file=`ls dist/electron/Packaged/ | grep '.dmg$'`
+      ./ossutilmac64 cp "dist/electron/Packaged/${osx_file}" "${BUCKET}/${osx_file}" -f
+    fi
+
+before_cache:
+  - rm -rf $HOME/.cache/electron-builder/wine
+
+branches:
+  except:
+    - 'master'

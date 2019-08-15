@@ -304,6 +304,14 @@
                 label="是否使用https"
               />
             </div>
+            <div class="q-ml-sm">
+              <q-btn
+                color="primary"
+                icon="bug_report"
+                label="打开开发者工具"
+                @click="toggleDevTools"
+              />
+            </div>
             <div class="text-h4 q-pa-sm">软件信息</div>
             <q-separator></q-separator>
             <div class="q-pa-sm">
@@ -409,7 +417,6 @@ export default {
     data: {
       handler() {
         this.setSiteList(clonedeep(this.data));
-        this.$electronStore.set('siteList', this.siteList);
       },
       deep: true,
     },
@@ -456,7 +463,6 @@ export default {
       });
       if (dialogResult) {
         const importedFile = await fs.readJSON(dialogResult[0]);
-        this.$electronStore.set('siteList', importedFile);
         this.setSiteList(importedFile);
         this.data = clonedeep(this.siteList);
       }
@@ -515,6 +521,17 @@ export default {
         user: 'ZyqGitHub1',
         repo: 'h-player-v2',
       });
+    },
+    toggleDevTools() {
+      const win = this.$q.electron.remote.BrowserWindow.getFocusedWindow();
+      if (win) {
+        const { webContents } = win;
+        if (webContents.isDevToolsOpened()) {
+          webContents.closeDevTools();
+        } else {
+          webContents.openDevTools();
+        }
+      }
     },
   },
 };

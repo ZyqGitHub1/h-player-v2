@@ -19,8 +19,13 @@ export default {
     setKeyWord(state, keyWord) {
       state.keyWord = keyWord;
     },
-    setSiteList(state, setSetList) {
-      state.siteList = setSetList;
+    setSiteList(state, siteList) {
+      if (!Array.isArray(siteList)) {
+        state.siteList = [];
+      } else {
+        state.siteList = siteList;
+      }
+      store.set('siteList', state.siteList);
     },
   },
   getters: {

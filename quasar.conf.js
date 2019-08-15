@@ -173,7 +173,7 @@ module.exports = function (ctx) {
     },
 
     electron: {
-      bundler: 'packager', // 'builder' or 'packager'
+      bundler: 'builder', // 'builder' or 'packager'
 
       extendWebpack(cfg) {
         // do something with Electron main process Webpack cfg
@@ -202,7 +202,17 @@ module.exports = function (ctx) {
 
       builder: {
         // https://www.electron.build/configuration/configuration
-        // appId: 'h-player'
+        appId: 'com.electron.h-player',
+        mac: {
+          category: 'public.app-category.video',
+          target: 'dmg',
+        },
+        win: {
+          target: 'zip',
+        },
+        linux: {
+          target: 'AppImage',
+        },
       },
     },
   };
