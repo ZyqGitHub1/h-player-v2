@@ -322,6 +322,7 @@ export default {
       siteList: state => state.site.siteList,
       currentClass: state => state.site.currentClass,
       globalKw: state => state.site.keyWord,
+      https: state => state.app.https,
     }),
     thumbStyle() {
       return {
