@@ -112,6 +112,7 @@
           :loading="loading"
           :total="total"
           :page="page"
+          :error="error"
           @page-change="pageChange"
         />
       </navigation>
@@ -176,12 +177,6 @@ export default {
       this.page = 1;
       this.fetchInfo();
       this.$router.push('/');
-    },
-    globalKw() {
-      console.log('globalKw');
-      this.setCurrentClass('all');
-      this.page = 1;
-      this.fetchInfo();
     },
   },
   methods: {
@@ -296,16 +291,20 @@ export default {
               })
               .onCancel(() => {
                 this.$store.commit('setKeyWord', this.keyWord);
+                this.fetchSearch();
               });
           } else {
             this.$store.commit('setKeyWord', this.keyWord);
+            this.fetchSearch();
           }
         } catch (error) {
           this.$store.commit('setKeyWord', this.keyWord);
+          this.fetchSearch();
           console.error(error);
         }
       } else {
         this.$store.commit('setKeyWord', this.keyWord);
+        this.fetchSearch();
       }
     },
     pageChange(value) {
@@ -314,6 +313,13 @@ export default {
       if (this.page !== 1) {
         this.fetchInfo();
       }
+    },
+    fetchSearch() {
+      console.log('fetchSearch');
+      this.setCurrentClass('all');
+      this.page = 1;
+      this.fetchInfo();
+      this.$router.push('/');
     },
   },
   computed: {
