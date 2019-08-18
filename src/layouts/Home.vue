@@ -137,8 +137,25 @@ import path from 'path';
 import { stringify } from 'query-string';
 import _toInteger from 'lodash/toInteger';
 import _get from 'lodash/get';
-import { getList, getDetail } from '../api/maccms-v8.js';
-import { parseXML } from '../utils/parse-xml.js';
+
+import { Subject, of } from 'rxjs';
+
+import {
+  pluck,
+  switchMap,
+  tap,
+  map,
+  concatMap,
+  catchError,
+} from 'rxjs/operators';
+
+// rxjs
+
+import {
+  getList as rxGetList,
+  getDetail as rxGetDetail,
+} from '../api/rx/maccms-v8.js';
+import { parseXML as rxParseXML } from '../utils/rx/parse-xml.js';
 
 export default {
   data() {
@@ -154,6 +171,7 @@ export default {
       page: 1,
       total: 0,
       videoList: [],
+      source$: new Subject(),
     };
   },
   components: {
@@ -168,15 +186,16 @@ export default {
       this.tab = this.siteList[0].id;
       this.setCurrentSiteId(this.tab);
     }
+    this.rxFetch();
   },
   watch: {
     tab() {
-      console.log('tab');
+      console.log('watch.tab', this.tab);
       this.setCurrentClass('all');
-      this.setCurrentSiteId(this.tab);
       this.page = 1;
-      this.fetchInfo();
+      this.setCurrentSiteId(this.tab);
       this.$router.push('/');
+      this.source$.next();
     },
   },
   methods: {
@@ -187,65 +206,93 @@ export default {
       'setSiteList',
     ]),
 
-    async getVideoList() {
-      this.loading = true;
-      this.error = false;
-      const uri = this.currentUri;
-      // get video list and class
-      const params = {
-        pg: this.page,
-      };
-      if (this.currentClass !== 'all') {
-        params.t = this.currentClass;
-      }
-      if (this.keyWord) {
-        params.wd = this.keyWord;
-      }
-      const listResponse = await getList(uri, params);
-      const parsedList = await parseXML(listResponse.data);
-      this.videoClass = parsedList.rss.class[0].ty;
-      this.total = _toInteger(parsedList.rss.list[0].$.pagecount);
-      // get video detail
-      const videoInfo = _get(parsedList, 'rss.list[0].video', []);
-      this.ids = videoInfo.map(item => item.id[0]);
-    },
+    rxFetch() {
+      console.log('call:rxFetch');
+      const fetch$ = this.source$
+        .pipe(
+          map(() => this.tab),
+          tap((value) => {
+            console.log('rxFetch.tab', value);
+            this.loading = true;
+            this.error = false;
+            this.$q.loadingBar.stop();
+            this.$q.loadingBar.start();
+          }),
+          map(() => this.currentUri),
+          switchMap((url) => {
+            console.log('call:rxGetList');
+            console.log('rxGetList.page', this.page);
+            const params = {
+              pg: this.page,
+            };
+            if (this.currentClass !== 'all') {
+              params.t = this.currentClass;
+            }
+            if (this.keyWord) {
+              params.wd = this.keyWord;
+            }
+            return rxGetList(url, params).pipe(
+              pluck('data'),
+              concatMap(rxParseXML),
+              tap((value) => {
+                console.log('rxGetList->response.data->parseXML', value);
+                this.videoClass = value.rss.class[0].ty;
+                this.total = _toInteger(value.rss.list[0].$.pagecount);
+              }),
+              map((value) => {
+                // get video detail
+                const videoInfo = _get(value, 'rss.list[0].video', []);
+                return videoInfo.map(item => item.id[0]);
+              }),
+              concatMap((value) => {
+                console.log('call:rxGetDetail');
+                if (value.length !== 0) {
+                  return rxGetDetail(this.currentUri, {
+                    ids: value,
+                  }).pipe(
+                    pluck('data'),
+                    concatMap(rxParseXML),
+                  );
+                }
 
-    async getVideoDetail() {
-      this.loading = true;
-      this.error = false;
-      const detailResponse = await getDetail(this.currentUri, {
-        ids: this.ids,
-      });
-      const parsedDetail = await parseXML(detailResponse.data);
-      this.videoList = _get(parsedDetail, 'rss.list[0].video', []);
-    },
-
-    async fetchInfo() {
-      console.log('fetchInfo');
-      try {
-        this.loading = true;
-        this.error = false;
-        this.$q.loadingBar.start();
-        await this.getVideoList();
-        if (this.ids.length !== 0) {
-          await this.getVideoDetail();
-        } else {
-          this.videoList = [];
-        }
-      } catch (error) {
-        this.error = true;
-        console.error(error);
-      } finally {
-        this.loading = false;
-        this.$q.loadingBar.stop();
-      }
+                return of([]);
+              }),
+              catchError(() => {
+                this.loading = false;
+                this.error = true;
+                this.$q.loadingBar.stop();
+                return of([]);
+              }),
+            );
+          }),
+        );
+      this.$subscribeTo(fetch$,
+        (value) => {
+          console.log('rxFetch.next', value);
+          this.videoList = _get(value, 'rss.list[0].video', []);
+          this.loading = false;
+          this.$q.loadingBar.stop();
+        },
+        (err) => {
+          console.log('rxFetch.error');
+          console.error(err);
+          this.loading = false;
+          this.error = true;
+          this.$q.loadingBar.stop();
+          this.rxFetch();
+        },
+        () => {
+          this.loading = false;
+          this.$q.loadingBar.stop();
+          console.log('rxFetch.complete');
+        });
     },
     configClick() {
       this.$router.push('/config');
     },
     changeClass(currentClass) {
       this.setCurrentClass(currentClass);
-      this.fetchInfo();
+      this.source$.next();
       this.$router.push('/');
     },
     gotoPlayer(video) {
@@ -308,17 +355,18 @@ export default {
       }
     },
     pageChange(value) {
-      console.log('pageChange');
+      console.log('call:pageChange');
+      console.log('pageChange.page', value);
       this.page = value;
       if (this.page !== 1) {
-        this.fetchInfo();
+        this.source$.next();
       }
     },
     fetchSearch() {
-      console.log('fetchSearch');
+      console.log('call:fetchSearch');
       this.setCurrentClass('all');
       this.page = 1;
-      this.fetchInfo();
+      this.source$.next();
       this.$router.push('/');
     },
   },
