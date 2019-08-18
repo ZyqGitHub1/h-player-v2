@@ -23,6 +23,7 @@
 </template>
 
 <script>
+import isAbsoluteUrl from 'is-absolute-url';
 import HlsPlayer from 'components/HlsPlayer';
 import normalizeUrl from 'normalize-url';
 import _get from 'lodash/get';
@@ -51,7 +52,7 @@ export default {
   components: {
     HlsPlayer,
   },
-  created() {
+  mounted() {
     const videoInfo = JSON.parse(this.$route.query.video);
     const episodeInfo = JSON.parse(this.$route.query.episode);
     this.videoUrl = _get(episodeInfo, 'url', '');
@@ -59,8 +60,12 @@ export default {
   },
   methods: {
     normalizeUrl(url) {
-      const pureUrl = url.replace(/(.*?)\$/, '').replace(/\$(.*)/, '');
-      return normalizeUrl(pureUrl);
+      if (isAbsoluteUrl(url)) {
+        const pureUrl = url.replace(/(.*?)\$/, '').replace(/\$(.*)/, '');
+        return normalizeUrl(pureUrl);
+      }
+
+      return '';
     },
     maximize() {
       const ipc = this.$q.electron.ipcRenderer;

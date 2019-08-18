@@ -47,6 +47,15 @@ export default {
     this.emit.forEach((element) => {
       this.player.on(element, this.emitPlayerEvent);
     });
+    this.$once('hook:beforeDestroy', () => {
+      this.player.destroy();
+      if (this.hls.stopLoad && this.hls.destroy) {
+        console.log('HLSPlayer:clear');
+        this.hls.stopLoad();
+        this.hls.destroy();
+      }
+      console.log('HLSPlayer:beforeDestroy');
+    });
   },
   computed: {
     video() {
@@ -61,9 +70,15 @@ export default {
   },
   methods: {
     initPlayer() {
+      console.log('HLSPlayer:initPlayer');
       if (!Hls.isSupported()) {
         this.video.src = this.source;
       } else {
+        if (this.hls.stopLoad && this.hls.destroy) {
+          console.log('HLSPlayer:clear');
+          this.hls.stopLoad();
+          this.hls.destroy();
+        }
         const hls = new Hls();
         this.hls = hls;
         hls.on(Hls.Events.ERROR, (event, data) => {
@@ -72,11 +87,6 @@ export default {
 
         hls.loadSource(this.source);
         hls.attachMedia(this.video);
-        this.$once('hook:beforeDestroy', () => {
-          this.player.destroy();
-          hls.stopLoad();
-          hls.destroy();
-        });
       }
     },
   },
