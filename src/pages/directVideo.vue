@@ -15,6 +15,7 @@
 <script>
 import HlsPlayer from 'components/HlsPlayer';
 import normalizeUrl from 'normalize-url';
+import isAbsoluteUrl from 'is-absolute-url';
 
 export default {
   name: 'MiniVideo',
@@ -40,15 +41,19 @@ export default {
   components: {
     HlsPlayer,
   },
-  created() {
+  mounted() {
     const videoInfo = JSON.parse(this.$route.query.video);
     this.videoUrl = videoInfo.url;
     document.querySelector('title').text = videoInfo.url;
   },
   methods: {
     normalizeUrl(url) {
-      const pureUrl = url.replace(/(.*?)\$/, '').replace(/\$(.*)/, '');
-      return normalizeUrl(pureUrl);
+      if (isAbsoluteUrl(url)) {
+        const pureUrl = url.replace(/(.*?)\$/, '').replace(/\$(.*)/, '');
+        return normalizeUrl(pureUrl);
+      }
+
+      return '';
     },
     errorHandler(event, data) {
       if (data.details && data.details === 'manifestLoadError') {
