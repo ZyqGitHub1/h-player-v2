@@ -12,6 +12,7 @@
           <hls-player
             :source="normalizeUrl(currentEpisode.url)"
             :options="options"
+            @hls-error="errorHandler"
             ref="player"
           ></hls-player>
         </viewArea>
@@ -108,8 +109,6 @@ import Positioner from 'electron-positioner';
 import _find from 'lodash/find';
 import _get from 'lodash/get';
 
-const { BrowserWindow, getCurrentWindow } = require('electron').remote;
-
 export default {
   name: 'Videop',
   data() {
@@ -170,6 +169,14 @@ export default {
     this.initUrl(uris);
     [this.currentEpisode] = this.episodeInfo;
   },
+  watch: {
+    currentVideo(currentVideo) {
+      console.log('watch');
+      const uris = _get(currentVideo, 'dl[0].dd[0]._', '');
+      this.initUrl(uris);
+      [this.currentEpisode] = this.episodeInfo;
+    },
+  },
   methods: {
     sliceUrl(str) {
       return str.split('#');
@@ -213,6 +220,7 @@ export default {
       this.$router.go(-1);
     },
     minimize() {
+      const { BrowserWindow, getCurrentWindow } = this.$q.electron.remote;
       this.pause();
       const videoInfo = JSON.stringify(this.currentVideo);
       const episodeInfo = JSON.stringify(this.currentEpisode);
@@ -232,6 +240,15 @@ export default {
       const positioner = new Positioner(win);
       positioner.move('bottomRight');
       win.loadURL(`${process.env.APP_URL}#/mini-video?${encodeUrl}`);
+    },
+    errorHandler(event, data) {
+      if (data.details && data.details === 'manifestLoadError') {
+        this.$q.dialog({
+          title: '错误',
+          message: '无法加载资源',
+          persistent: true,
+        });
+      }
     },
   },
   computed: {

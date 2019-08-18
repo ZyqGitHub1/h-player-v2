@@ -41,27 +41,12 @@ export default {
     };
   },
   mounted() {
+    console.log('HLSPlayer:mounted');
     this.player = new Plyr(this.video, this.options);
     this.$emit('player', this.player);
     this.emit.forEach((element) => {
       this.player.on(element, this.emitPlayerEvent);
     });
-    if (!Hls.isSupported()) {
-      this.video.src = this.source;
-    } else {
-      const hls = new Hls();
-      this.hls = hls;
-      hls.on(Hls.Events.ERROR, (event, data) => {
-        this.$emit('hls-error', event, data);
-      });
-      hls.loadSource(this.source);
-      hls.attachMedia(this.video);
-      this.$once('hook:beforeDestroy', () => {
-        this.player.destroy();
-        hls.stopLoad();
-        hls.destroy();
-      });
-    }
   },
   computed: {
     video() {
@@ -70,26 +55,25 @@ export default {
   },
   watch: {
     source() {
+      console.log('HLSPlayer:watch:source');
+      this.initPlayer();
+    },
+  },
+  methods: {
+    initPlayer() {
       if (!Hls.isSupported()) {
         this.video.src = this.source;
       } else {
         const hls = new Hls();
         this.hls = hls;
+        hls.on(Hls.Events.ERROR, (event, data) => {
+          this.$emit('hls-error', event, data);
+        });
+
         hls.loadSource(this.source);
         hls.attachMedia(this.video);
         this.$once('hook:beforeDestroy', () => {
-          try {
-            this.player.destroy();
-          } catch (e) {
-            if (
-              !(
-                this.opts.hideYouTubeDOMError
-                && e.message === 'The YouTube player is not attached to the DOM.'
-              )
-            ) {
-              console.error(e);
-            }
-          }
+          this.player.destroy();
           hls.stopLoad();
           hls.destroy();
         });
