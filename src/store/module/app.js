@@ -4,12 +4,16 @@ import pkg from '../../../package.json';
 export default {
   state: {
     https: true,
+    loadImage: true,
     currentVersion: pkg.version,
     latestVersion: '0.0.0',
   },
   mutations: {
     setHttps(state, status) {
       state.https = status;
+    },
+    setLoadImage(state, status) {
+      state.loadImage = status;
     },
     setLatestVersion(state, latestVersion) {
       state.latestVersion = latestVersion;

@@ -304,6 +304,12 @@
                 label="是否使用https"
               />
             </div>
+            <div>
+              <q-toggle
+                v-model="loadImage"
+                label="是否自动加载图片"
+              />
+            </div>
             <div class="q-ml-sm">
               <q-btn
                 color="primary"
@@ -441,6 +447,14 @@ export default {
       },
       set(value) {
         this.$store.commit('setHttps', value);
+      },
+    },
+    loadImage: {
+      get() {
+        return this.$store.state.app.loadImage;
+      },
+      set(value) {
+        this.$store.commit('setLoadImage', value);
       },
     },
     thumbStyle() {
