@@ -357,10 +357,10 @@ export default {
     pageChange(value) {
       console.log('call:pageChange');
       console.log('pageChange.page', value);
-      this.page = value;
-      if (this.page !== 1) {
+      if (this.page !== value) {
         this.source$.next();
       }
+      this.page = value;
     },
     fetchSearch() {
       console.log('call:fetchSearch');
