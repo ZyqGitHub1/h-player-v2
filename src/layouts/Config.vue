@@ -422,6 +422,7 @@ export default {
   watch: {
     data: {
       handler() {
+        console.log('config->watch->data->handler');
         this.setSiteList(clonedeep(this.data));
       },
       deep: true,
@@ -477,8 +478,7 @@ export default {
       });
       if (dialogResult) {
         const importedFile = await fs.readJSON(dialogResult[0]);
-        this.setSiteList(importedFile);
-        this.data = clonedeep(this.siteList);
+        this.data = clonedeep(importedFile);
       }
     },
     async saveDialog() {
@@ -517,7 +517,6 @@ export default {
     clearSource() {
       this.$electronStore.clear();
       this.data = [];
-      this.setSiteList([]);
     },
     checkUpdate() {
       this.updateing = true;
