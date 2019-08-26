@@ -20,6 +20,7 @@ export default {
         this.$router.push('/import');
       }
     });
+    this.$store.dispatch('loadSettings');
   },
   methods: {
     ...mapMutations(['setCurrentVideo']),
