@@ -358,9 +358,9 @@ export default {
       console.log('call:pageChange');
       console.log('pageChange.page', value);
       if (this.page !== value) {
+        this.page = value;
         this.source$.next();
       }
-      this.page = value;
     },
     fetchSearch() {
       console.log('call:fetchSearch');
