@@ -1,7 +1,4 @@
-import util from 'util';
-import { parseString } from 'xml2js';
-
-const parseStringSync = util.promisify(parseString);
+import { parseStringPromise } from 'xml2js';
 
 export function parseXML(string, options) {
   const encodeXml = string.replace(/&/g, '&amp;');
@@ -9,5 +6,5 @@ export function parseXML(string, options) {
     explicitArray: true,
   };
   const mergedOptions = Object.assign(defaultOptions, options);
-  return parseStringSync(encodeXml, mergedOptions);
+  return parseStringPromise(encodeXml, mergedOptions);
 }
