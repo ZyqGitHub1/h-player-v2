@@ -165,7 +165,7 @@ export default {
       keyWord: '',
       tab: '',
       videoClass: [],
-      left: this.$q.platform.is.desktop,
+      left: this.$q.screen.lt.sm,
       httoOrHttps: false,
       ids: [],
       page: 1,
@@ -194,7 +194,9 @@ export default {
       this.setCurrentClass('all');
       this.page = 1;
       this.setCurrentSiteId(this.tab);
-      this.$router.push('/');
+      if (this.$route.path !== '/') {
+        this.$router.push('/');
+      }
       this.source$.next();
     },
   },
