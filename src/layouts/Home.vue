@@ -165,7 +165,7 @@ export default {
       keyWord: '',
       tab: '',
       videoClass: [],
-      left: this.$q.screen.lt.sm,
+      left: this.$q.screen.gt.sm,
       httoOrHttps: false,
       ids: [],
       page: 1,
