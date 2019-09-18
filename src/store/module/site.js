@@ -1,4 +1,4 @@
-const Store = require('electron-store');
+import Store from 'electron-store';
 
 const store = new Store();
 
@@ -36,8 +36,10 @@ export default {
       const storeSiteList = store.get('siteList');
       if (!Array.isArray(storeSiteList)) {
         context.commit('setSiteList', []);
+      } else {
+        context.commit('setSiteList', storeSiteList);
       }
-      context.commit('setSiteList', storeSiteList);
+
 
       return storeSiteList;
     },

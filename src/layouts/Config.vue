@@ -304,6 +304,12 @@
                 label="是否使用https"
               />
             </div>
+            <div>
+              <q-toggle
+                v-model="loadImage"
+                label="是否自动加载图片"
+              />
+            </div>
             <div class="q-ml-sm">
               <q-btn
                 color="primary"
@@ -416,6 +422,7 @@ export default {
   watch: {
     data: {
       handler() {
+        console.log('config->watch->data->handler');
         this.setSiteList(clonedeep(this.data));
       },
       deep: true,
@@ -443,6 +450,14 @@ export default {
         this.$store.commit('setHttps', value);
       },
     },
+    loadImage: {
+      get() {
+        return this.$store.state.app.loadImage;
+      },
+      set(value) {
+        this.$store.commit('setLoadImage', value);
+      },
+    },
     thumbStyle() {
       return {
         right: '2px',
@@ -463,8 +478,7 @@ export default {
       });
       if (dialogResult) {
         const importedFile = await fs.readJSON(dialogResult[0]);
-        this.setSiteList(importedFile);
-        this.data = clonedeep(this.siteList);
+        this.data = clonedeep(importedFile);
       }
     },
     async saveDialog() {
@@ -503,7 +517,6 @@ export default {
     clearSource() {
       this.$electronStore.clear();
       this.data = [];
-      this.setSiteList([]);
     },
     checkUpdate() {
       this.updateing = true;
