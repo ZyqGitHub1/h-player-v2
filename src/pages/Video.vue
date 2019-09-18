@@ -205,7 +205,7 @@ export default {
     },
     normalizeUrl(url) {
       if (isAbsoluteUrl(url)) {
-        return normalizeUrl(url);
+        return normalizeUrl(url, { stripWWW: false });
       }
       return '';
     },
