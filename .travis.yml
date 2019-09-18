@@ -62,7 +62,7 @@ script:
         win_file=`ls dist/electron/Packaged/ | grep '.zip$'`
       ./ossutil64 cp "dist/electron/Packaged/${win_file}" "${BUCKET}/${win_file}" -f
     else
-      npm electron:build
+      npm run electron:build
       osx_file=`ls dist/electron/Packaged/ | grep '.dmg$'`
       ./ossutilmac64 cp "dist/electron/Packaged/${osx_file}" "${BUCKET}/${osx_file}" -f
     fi
