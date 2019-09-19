@@ -105,7 +105,7 @@ import normalizeUrl from 'normalize-url';
 import isAbsoluteUrl from 'is-absolute-url';
 import { mapState } from 'vuex';
 import { stringify } from 'query-string';
-import Positioner from 'electron-positioner';
+
 import _find from 'lodash/find';
 import _get from 'lodash/get';
 
@@ -205,7 +205,7 @@ export default {
     },
     normalizeUrl(url) {
       if (isAbsoluteUrl(url)) {
-        return normalizeUrl(url);
+        return normalizeUrl(url, { stripWWW: false });
       }
       return '';
     },
@@ -227,8 +227,8 @@ export default {
       const encodeUrl = stringify({ video: videoInfo, episode: episodeInfo });
       const parentWindow = getCurrentWindow();
       const win = new BrowserWindow({
-        width: 800,
-        height: 600,
+        width: 400,
+        height: 300,
         useContentSize: true,
         webPreferences: {
           nodeIntegration: true,
@@ -237,8 +237,6 @@ export default {
         parent: parentWindow,
       });
       win.removeMenu();
-      const positioner = new Positioner(win);
-      positioner.move('bottomRight');
       win.loadURL(`${process.env.APP_URL}#/mini-video?${encodeUrl}`);
     },
     errorHandler(event, data) {

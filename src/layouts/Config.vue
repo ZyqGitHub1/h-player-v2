@@ -476,8 +476,8 @@ export default {
         properties: ['openFile'],
         filters: [{ name: 'JSON', extensions: ['json'] }],
       });
-      if (dialogResult) {
-        const importedFile = await fs.readJSON(dialogResult[0]);
+      if (!dialogResult.canceled && dialogResult.filePaths) {
+        const importedFile = await fs.readJSON(dialogResult.filePaths[0]);
         this.data = clonedeep(importedFile);
       }
     },
@@ -486,8 +486,8 @@ export default {
       const dialogResult = await dialog.showSaveDialog({
         defaultPath: 'source.json',
       });
-      if (dialogResult) {
-        await fs.writeJson(dialogResult, this.siteList);
+      if (!dialogResult.canceled && dialogResult.filePath) {
+        await fs.writeJson(dialogResult.filePath, this.siteList);
       }
     },
     closeConfig() {

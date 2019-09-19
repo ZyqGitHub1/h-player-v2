@@ -50,7 +50,7 @@ export default {
     normalizeUrl(url) {
       if (isAbsoluteUrl(url)) {
         const pureUrl = url.replace(/(.*?)\$/, '').replace(/\$(.*)/, '');
-        return normalizeUrl(pureUrl);
+        return normalizeUrl(pureUrl, { stripWWW: false });
       }
 
       return '';
