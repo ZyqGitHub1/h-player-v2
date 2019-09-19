@@ -173,13 +173,15 @@
                 />
               </q-card-section>
               <q-card-section
-                style="max-height: 80vh"
+                style="max-height: 50vh"
                 class="scroll"
               >
                 <q-input
                   v-model="addRowData.name"
+                  ref="name"
                   autofocus
                   label="name"
+                  :rules="[val => !!val || '必填项']"
                 />
                 <q-input
                   v-model="addRowData.uri"
@@ -187,11 +189,15 @@
                 />
                 <q-input
                   v-model="addRowData.httpApi"
+                  ref="httpApi"
                   label="httpApi"
+                  :rules="[isUrl]"
                 />
                 <q-input
                   v-model="addRowData.httpsApi"
+                  ref="httpsApi"
                   label="httpsApi"
+                  :rules="[isUrl]"
                 />
                 <q-input
                   v-model="addRowData.type"
@@ -211,7 +217,6 @@
                   flat
                   @click="addRowInTable"
                   label="确定"
-                  v-close-popup
                 />
               </q-card-actions>
             </q-card>
@@ -233,7 +238,7 @@
                 />
               </q-card-section>
               <q-card-section
-                style="max-height: 80vh"
+                style="max-height: calc(100vh - 200px)"
                 class="scroll"
               >
                 <dnd-sort @change-order="changeOrder"></dnd-sort>
@@ -371,6 +376,7 @@ import { mapMutations, mapState } from 'vuex';
 import { uid } from 'quasar';
 import fs from 'fs-extra';
 import { openNewGitHubIssue } from 'electron-util';
+import isAbsoluteUrl from 'is-absolute-url';
 import dndSort from './components/dndSort';
 
 export default {
@@ -501,16 +507,28 @@ export default {
       this.data = this.data.filter(element => element.id !== prop.row.id);
     },
     addRowInTable() {
-      this.addRowData.id = uid();
-      this.data.push(this.addRowData);
-      this.addRowData = {
-        id: '',
-        name: '',
-        uri: '',
-        httpApi: '',
-        httpsApi: '',
-        type: '',
-      };
+      this.$refs.name.validate();
+      this.$refs.httpApi.validate();
+      this.$refs.httpsApi.validate();
+
+      if (this.$refs.name.hasError || this.$refs.httpApi.hasError || this.$refs.httpsApi.hasError) {
+        this.$q.notify({
+          color: 'negative',
+          message: '请完善添加的视频源信息',
+        });
+      } else {
+        this.addRowData.id = uid();
+        this.data.push(this.addRowData);
+        this.addRowData = {
+          id: '',
+          name: '',
+          uri: '',
+          httpApi: '',
+          httpsApi: '',
+          type: '',
+        };
+        this.addDialog = false;
+      }
     },
     showSort() {
       this.sortDialog = true;
@@ -556,6 +574,9 @@ export default {
           webContents.openDevTools();
         }
       }
+    },
+    isUrl(val) {
+      return isAbsoluteUrl(val) || '请输入有效url';
     },
   },
 };
