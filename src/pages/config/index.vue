@@ -32,6 +32,14 @@
                 label="添加"
                 @click="addRow"
               />
+              <q-btn
+                flat
+                dense
+                color="primary"
+                :disable="loading"
+                label="排序"
+                @click="showSort"
+              />
               <q-space />
               <q-input
                 borderless
@@ -153,58 +161,43 @@
             persistent
           >
             <q-card style="min-width: 400px">
-              <q-card-section>
-                <div class="text-h6">name</div>
-              </q-card-section>
-
-              <q-card-section>
-                <q-input
+              <q-card-section class="row items-center">
+                <div class="text-h6">添加视频源</div>
+                <q-space />
+                <q-btn
+                  icon="close"
+                  flat
+                  round
                   dense
+                  v-close-popup
+                />
+              </q-card-section>
+              <q-card-section
+                style="max-height: 80vh"
+                class="scroll"
+              >
+                <q-input
                   v-model="addRowData.name"
                   autofocus
+                  label="name"
                 />
-              </q-card-section>
-              <q-card-section>
-                <div class="text-h6">url</div>
-              </q-card-section>
-
-              <q-card-section>
                 <q-input
-                  dense
                   v-model="addRowData.uri"
+                  label="url"
                 />
-              </q-card-section>
-              <q-card-section>
-                <div class="text-h6">httpApi</div>
-              </q-card-section>
-
-              <q-card-section>
                 <q-input
-                  dense
                   v-model="addRowData.httpApi"
+                  label="httpApi"
                 />
-              </q-card-section>
-              <q-card-section>
-                <div class="text-h6">httpsApi</div>
-              </q-card-section>
-
-              <q-card-section>
                 <q-input
-                  dense
                   v-model="addRowData.httpsApi"
+                  label="httpsApi"
                 />
-              </q-card-section>
-              <q-card-section>
-                <div class="text-h6">type</div>
-              </q-card-section>
-
-              <q-card-section>
                 <q-input
-                  dense
                   v-model="addRowData.type"
+                  label="type"
                 />
               </q-card-section>
-
               <q-card-actions
                 align="right"
                 class="text-primary"
@@ -217,6 +210,46 @@
                 <q-btn
                   flat
                   @click="addRowInTable"
+                  label="确定"
+                  v-close-popup
+                />
+              </q-card-actions>
+            </q-card>
+          </q-dialog>
+          <q-dialog
+            v-model="sortDialog"
+            persistent
+          >
+            <q-card style="min-width: 400px">
+              <q-card-section class="row items-center">
+                <div class="text-h6">拖动排序</div>
+                <q-space />
+                <q-btn
+                  icon="close"
+                  flat
+                  round
+                  dense
+                  v-close-popup
+                />
+              </q-card-section>
+              <q-card-section
+                style="max-height: 80vh"
+                class="scroll"
+              >
+                <dnd-sort @change-order="changeOrder"></dnd-sort>
+              </q-card-section>
+              <q-card-actions
+                align="right"
+                class="text-primary"
+              >
+                <q-btn
+                  flat
+                  label="取消"
+                  v-close-popup
+                />
+                <q-btn
+                  flat
+                  @click="finishSort"
                   label="确定"
                   v-close-popup
                 />
@@ -338,6 +371,7 @@ import { mapMutations, mapState } from 'vuex';
 import { uid } from 'quasar';
 import fs from 'fs-extra';
 import { openNewGitHubIssue } from 'electron-util';
+import dndSort from './components/dndSort';
 
 export default {
   name: 'Config',
@@ -348,6 +382,7 @@ export default {
       updateing: false,
       filter: '',
       rowCount: 10,
+      tempOrder: [],
       columns: [
         {
           name: 'id',
@@ -377,6 +412,7 @@ export default {
       ],
       data: [],
       addDialog: false,
+      sortDialog: false,
       clearConfirm: false,
       addRowData: {
         id: '',
@@ -399,6 +435,7 @@ export default {
   },
   components: {
     scrollWarp,
+    dndSort,
   },
   mounted() {
     this.data = clonedeep(this.siteList);
@@ -474,6 +511,16 @@ export default {
         httpsApi: '',
         type: '',
       };
+    },
+    showSort() {
+      this.sortDialog = true;
+      this.tempOrder = clonedeep(this.data);
+    },
+    changeOrder(list) {
+      this.tempOrder = list;
+    },
+    finishSort() {
+      this.data = this.tempOrder;
     },
     showClearConfirm() {
       this.clearConfirm = true;
