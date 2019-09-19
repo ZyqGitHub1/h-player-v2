@@ -3436,11 +3436,6 @@ electron-packager@^14.0.6:
     semver "^6.0.0"
     yargs-parser "^13.0.0"
 
-electron-positioner@^4.1.0:
-  version "4.1.0"
-  resolved "https://registry.npm.taobao.org/electron-positioner/download/electron-positioner-4.1.0.tgz#e158f8f6aabd6725a8a9b4f2279b9504bcbea1b0"
-  integrity sha1-4Vj49qq9ZyWoqbTyJ5uVBLy+obA=
-
 electron-publish@21.2.0:
   version "21.2.0"
   resolved "https://registry.npm.taobao.org/electron-publish/download/electron-publish-21.2.0.tgz#cc225cb46aa62e74b899f2f7299b396c9802387d"
