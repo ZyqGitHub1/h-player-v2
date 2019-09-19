@@ -48,8 +48,8 @@ script:
         electronuserland/builder:wine \
         /bin/bash -c "npm install && npm run electron:build -- --bundler builder --target linux"
         ls dist/electron/Packaged/
-      # linux_file=`ls dist/electron/Packaged/ | grep '.AppImage$'`
-      # ./ossutil64 cp "dist/electron/Packaged/${linux_file}" "${BUCKET}/${linux_file}" -f
+      linux_file=`ls dist/electron/Packaged/ | grep '.AppImage$'`
+      ./ossutil64 cp "dist/electron/Packaged/${linux_file}" "${BUCKET}/${linux_file}" -f
 
       docker run --rm \
         --env-file <(env | grep -vE '\r|\n' | grep -iE 'DEBUG|NODE_|ELECTRON_|YARN_|NPM_|CI|CIRCLE|TRAVIS_TAG|TRAVIS|TRAVIS_REPO_|TRAVIS_BUILD_|TRAVIS_BRANCH|TRAVIS_PULL_REQUEST_|APPVEYOR_|CSC_|GH_|GITHUB_|BT_|AWS_|STRIP|BUILD_') \
@@ -61,13 +61,15 @@ script:
         electronuserland/builder:wine \
         /bin/bash -c "npm install && npm run electron:build -- --bundler builder --target win"
       ls dist/electron/Packaged/
-      # win_file=`ls dist/electron/Packaged/ | grep '.zip$'`
-      # ./ossutil64 cp "dist/electron/Packaged/${win_file}" "${BUCKET}/${win_file}" -f
+      for i in `ls dist/electron/Packaged/ | grep 'win.zip$'`;
+      do
+      ./ossutil64 cp "dist/electron/Packaged/$i" "${BUCKET}/$i" -f
+      done
     else
       npm run electron:build
       ls dist/electron/Packaged/
-      # osx_file=`ls dist/electron/Packaged/ | grep '.dmg$'`
-      # ./ossutilmac64 cp "dist/electron/Packaged/${osx_file}" "${BUCKET}/${osx_file}" -f
+      osx_file=`ls dist/electron/Packaged/ | grep '.dmg$'`
+      ./ossutilmac64 cp "dist/electron/Packaged/${osx_file}" "${BUCKET}/${osx_file}" -f
     fi
 
 before_cache:
