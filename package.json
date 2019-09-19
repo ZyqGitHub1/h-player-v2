@@ -1,6 +1,6 @@
 {
   "name": "h-player",
-  "version": "0.9.4",
+  "version": "0.9.5",
   "description": "A Quasar Framework app",
   "productName": "h-player",
   "cordovaId": "org.cordova.quasar.app",
