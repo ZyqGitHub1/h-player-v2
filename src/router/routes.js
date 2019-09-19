@@ -24,7 +24,7 @@ const routes = [
   {
     path: '/config',
     component: () => import('layouts/Config'),
-    // children: [{ path: '', component: () => import('pages/MiniVideo') }],
+    children: [{ path: '', component: () => import('pages/config') }],
   },
 ];
 
