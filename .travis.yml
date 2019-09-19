@@ -77,4 +77,4 @@ before_cache:
 
 branches:
   except:
-    - 'master'
+    - 'dev'
