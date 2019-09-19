@@ -51,12 +51,12 @@ export default {
     ...mapMutations(['setSiteList']),
     async openDialog() {
       const { dialog } = this.$q.electron.remote;
-      const dialogResult = dialog.showOpenDialog({
+      const dialogResult = await dialog.showOpenDialog({
         properties: ['openFile'],
         filters: [{ name: 'JSON', extensions: ['json'] }],
       });
-      if (dialogResult) {
-        const importedFile = await fs.readJSON(dialogResult[0]);
+      if (!dialogResult.canceled && dialogResult.filePaths) {
+        const importedFile = await fs.readJSON(dialogResult.filePaths[0]);
         this.setSiteList(importedFile);
         this.$router.push('/');
       }
