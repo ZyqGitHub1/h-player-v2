@@ -26,8 +26,8 @@ export default {
   name: 'FooterContent',
   computed: {
     ...mapState({
-      currentVersion: state => state.app.currentVersion,
-      latestVersion: state => state.app.latestVersion,
+      currentVersion: (state) => state.app.currentVersion,
+      latestVersion: (state) => state.app.latestVersion,
     }),
     canUpdate() {
       return (

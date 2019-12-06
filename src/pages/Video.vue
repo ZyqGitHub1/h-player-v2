@@ -200,7 +200,7 @@ export default {
 
     initUrl(str) {
       const slicedUrl = this.sliceUrl(str);
-      const episodeInfo = slicedUrl.map(element => this.getUrlInfo(element));
+      const episodeInfo = slicedUrl.map((element) => this.getUrlInfo(element));
       this.episodeInfo = episodeInfo;
     },
     normalizeUrl(url) {
@@ -251,7 +251,7 @@ export default {
   },
   computed: {
     ...mapState({
-      currentVideo: state => state.video.currentVideo,
+      currentVideo: (state) => state.video.currentVideo,
     }),
     thumbStyle() {
       return {

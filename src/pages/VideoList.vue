@@ -177,11 +177,11 @@ export default {
   watch: {
     videoList() {
       if (this.loadImage) {
-        const pairs = this.videoList.map(video => [video.id, true]);
+        const pairs = this.videoList.map((video) => [video.id, true]);
         const visableMap = _fromPairs(pairs);
         this.imageVisable = visableMap;
       } else {
-        const pairs = this.videoList.map(video => [video.id, false]);
+        const pairs = this.videoList.map((video) => [video.id, false]);
         const visableMap = _fromPairs(pairs);
         this.imageVisable = visableMap;
       }
@@ -206,9 +206,9 @@ export default {
   computed: {
     ...mapGetters(['currentSite']),
     ...mapState({
-      currentClass: state => state.site.currentClass,
-      https: state => state.app.https,
-      keyWord: state => state.site.keyWord,
+      currentClass: (state) => state.site.currentClass,
+      https: (state) => state.app.https,
+      keyWord: (state) => state.site.keyWord,
     }),
     thumbStyle() {
       return {

@@ -448,9 +448,9 @@ export default {
   },
   computed: {
     ...mapState({
-      siteList: state => state.site.siteList,
-      currentVersion: state => state.app.currentVersion,
-      latestVersion: state => state.app.latestVersion,
+      siteList: (state) => state.site.siteList,
+      currentVersion: (state) => state.app.currentVersion,
+      latestVersion: (state) => state.app.latestVersion,
     }),
     https: {
       get() {
@@ -504,7 +504,7 @@ export default {
       this.addDialog = true;
     },
     deleteRow(prop) {
-      this.data = this.data.filter(element => element.id !== prop.row.id);
+      this.data = this.data.filter((element) => element.id !== prop.row.id);
     },
     addRowInTable() {
       this.$refs.name.validate();

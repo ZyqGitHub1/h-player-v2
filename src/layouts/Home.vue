@@ -244,7 +244,7 @@ export default {
               map((value) => {
                 // get video detail
                 const videoInfo = _get(value, 'rss.list[0].video', []);
-                return videoInfo.map(item => item.id[0]);
+                return videoInfo.map((item) => item.id[0]);
               }),
               concatMap((value) => {
                 console.log('call:rxGetDetail');
@@ -375,10 +375,10 @@ export default {
   computed: {
     ...mapGetters(['currentSite']),
     ...mapState({
-      siteList: state => state.site.siteList,
-      currentClass: state => state.site.currentClass,
-      globalKw: state => state.site.keyWord,
-      https: state => state.app.https,
+      siteList: (state) => state.site.siteList,
+      currentClass: (state) => state.site.currentClass,
+      globalKw: (state) => state.site.keyWord,
+      https: (state) => state.app.https,
     }),
     thumbStyle() {
       return {

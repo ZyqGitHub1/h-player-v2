@@ -29,7 +29,7 @@ export default {
     },
   },
   getters: {
-    currentSite: state => state.siteList.find(item => item.id === state.currentSiteId),
+    currentSite: (state) => state.siteList.find((item) => item.id === state.currentSiteId),
   },
   actions: {
     loadSiteList(context) {

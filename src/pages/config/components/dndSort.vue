@@ -53,7 +53,7 @@ export default {
   },
   computed: {
     ...mapState({
-      siteList: state => state.site.siteList,
+      siteList: (state) => state.site.siteList,
     }),
     dragOptions() {
       return {
