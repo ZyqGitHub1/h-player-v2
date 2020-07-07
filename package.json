@@ -37,7 +37,7 @@
     "@vue/eslint-config-airbnb": "^4.0.0",
     "babel-eslint": "^10.0.3",
     "devtron": "^1.4.0",
-    "electron": "^6.0.9",
+    "electron": "^7.2.4",
     "electron-builder": "^21.2.0",
     "electron-debug": "^3.0.0",
     "electron-devtools-installer": "^2.2.4",
