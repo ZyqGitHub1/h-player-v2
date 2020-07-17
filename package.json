@@ -19,7 +19,7 @@
     "electron-util": "^0.12.1",
     "fs-extra": "^8.1.0",
     "hls.js": "^0.12.4",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "normalize-url": "^4.3.0",
     "plyr": "^3.5.6",
     "quasar": "^1.1.2",
