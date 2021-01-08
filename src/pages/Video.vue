@@ -24,6 +24,7 @@
         >
           <q-card>
             <q-card-section>
+              <div class="text-h6">标题: {{currentVideo.name[0]}}-{{currentEpisode.episode}}</div>
               <div class="text-h6">演员: {{currentVideo.actor[0]}}</div>
               <div class="text-h6">地区: {{currentVideo.area[0]}}</div>
               <div class="text-h6">简介: {{currentVideo.des[0]}}</div>
