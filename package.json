@@ -20,7 +20,7 @@
     "fs-extra": "^8.1.0",
     "hls.js": "^0.12.4",
     "lodash": "^4.17.15",
-    "normalize-url": "^4.3.0",
+    "normalize-url": "^4.5.1",
     "plyr": "^3.5.6",
     "quasar": "^1.1.2",
     "query-string": "^6.8.3",
